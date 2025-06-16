@@ -3,6 +3,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import {
   darkTheme,
   getDefaultConfig,
+  lightTheme,
   RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
 import { WagmiProvider } from 'wagmi';
@@ -31,12 +32,12 @@ const WalletProvider = ({ children }: { children: React.ReactNode }) => {
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider
           locale="en-US"
-          theme={darkTheme({
-            accentColor: 'white',
-            accentColorForeground: 'black',
-            borderRadius: 'small',
-            fontStack: 'system',
-            overlayBlur: 'small',
+          theme={lightTheme({
+            accentColor: "#ECEAFF", 
+      accentColorForeground: "#000",
+      borderRadius: "medium",
+      fontStack: "system",
+      overlayBlur: "small",
           })}
         >
           {children}

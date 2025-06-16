@@ -18,6 +18,7 @@ import { SidebarTrigger } from "../ui/sidebar";
 import { AgentGuideCard } from "../guide-cards";
 import { Press_Start_2P } from "next/font/google";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import CustomWalletButton from "../custom-connect";
 const pressStart2P = Press_Start_2P({
   variable: "--font-press-start-2p",
   subsets: ["latin"],
@@ -81,7 +82,9 @@ export function AgentDashboard() {
             Manage your AI agents and neural networks
           </p>
         </div>
-       <ConnectButton></ConnectButton>
+      <CustomWalletButton
+              
+            />
       </div>
 
       {/* Stats Cards */}

@@ -24,6 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAccount, useEnsName, useEnsAvatar, useChainId } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Separator } from "@/components/ui/separator";
+import CustomWalletButton from "@/components/custom-connect";
 
 export default function ProfilePage() {
   /* ---------- wagmi wallet state ---------- */
@@ -112,10 +113,8 @@ export default function ProfilePage() {
 
           {/* RainbowKit button */}
           <div className="mt-10 flex justify-center">
-            <ConnectButton
-              chainStatus="icon"
-              accountStatus="address"
-              showBalance={false}
+            <CustomWalletButton
+              
             />
           </div>
         </div>

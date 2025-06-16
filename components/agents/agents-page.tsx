@@ -49,6 +49,7 @@ import { SidebarTrigger } from "../ui/sidebar";
 import { TagMultiSelect } from "../tag-multi-select";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import CustomWalletButton from "../custom-connect";
 
 const pressStart2P = Press_Start_2P({
   variable: "--font-press-start-2p",
@@ -298,10 +299,8 @@ export default function AgentsPage() {
 
           {/* RainbowKit button */}
           <div className="mt-8 flex justify-center">
-            <ConnectButton
-              chainStatus="icon" /* tiny chain logo */
-              accountStatus="address" /* hide ENS / balance here */
-              showBalance={false}
+            <CustomWalletButton
+              
             />
           </div>
         </div>

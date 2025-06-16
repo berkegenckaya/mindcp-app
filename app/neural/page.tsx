@@ -5,6 +5,7 @@ import {  Hourglass } from "lucide-react";
 import { NeonButton } from "@/components/neon-button";
 import { IconBadge } from "@/components/icon-badge";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import Link from "next/link";
 
 export default function NeuralNetworksComingSoon() {
   return (
@@ -41,10 +42,12 @@ export default function NeuralNetworksComingSoon() {
         </p>
 
         <div className="flex justify-center">
-          <NeonButton title="  Notify&nbsp;Me" onClick={() => alert('You can subscribe to updates!')}>
-           {/*  <Rocket className="mr-2 h-4 w-4" /> */}
-          
+          <Link href="https://t.me/MindCPAI" target="_blank" >
+          <NeonButton title=" Notify&nbsp;Me" >
+        
+           
           </NeonButton>
+          </Link>
         </div>
       </div>
     </section>

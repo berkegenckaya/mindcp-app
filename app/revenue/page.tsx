@@ -1,10 +1,11 @@
 /* app/revenue/page.tsx */
 "use client";
 
-import {  Hourglass } from "lucide-react";
+import {  Hourglass} from "lucide-react";
 import { NeonButton } from "@/components/neon-button";
 import { IconBadge } from "@/components/icon-badge";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import Link from "next/link";
 
 export default function RevenueStakingComingSoon() {
   return (
@@ -41,10 +42,12 @@ export default function RevenueStakingComingSoon() {
         </p>
 
         <div className="flex justify-center">
-          <NeonButton title=" Notify&nbsp;Me" onClick={() => alert('We’ll ping you when it’s live!')}>
+          <Link href="https://t.me/MindCPAI" target="_blank" >
+          <NeonButton title=" Notify&nbsp;Me" >
         
            
           </NeonButton>
+          </Link>
         </div>
       </div>
     </section>
