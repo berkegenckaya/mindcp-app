@@ -1,13 +1,14 @@
 "use client"
 
-import { User, Bot } from 'lucide-react'
+import { User, Bot, AlertCircle } from "lucide-react"
 import type { Message } from "ai"
 import { cn } from "@/lib/utils"
 import ReactMarkdown from "react-markdown"
 import { TrendingPoolsCard } from "./trending-pools-card"
 import { TokenInfoCompact } from "./token-info-compact"
-import { DexPairsCard } from './dex-pair-card'
 
+import { WalletAnalysisCard } from "./wallet-analysis-card"
+import { DexPairsCard } from "./dex-pair-card"
 
 interface ChatMessageProps {
   message: Message
@@ -112,6 +113,39 @@ interface DexPairData {
   boosts?: number
 }
 
+interface WalletData {
+  address: string
+  summary: {
+    total_transactions: number
+    total_volume: string
+    gas_spent: string
+    chains_active: number
+    most_active_chain: string
+  }
+  activity: {
+    last_24h: number
+    last_7d: number
+    last_30d: number
+  }
+  transaction_types: Record<string, number>
+  top_tokens: Array<{
+    symbol: string
+    name: string
+    count: number
+    total_value_formatted: string
+  }>
+  recent_activity: Array<{
+    hash: string
+    timestamp_formatted: string
+    type: string
+    value_formatted: string
+    chain: string
+    description: string
+  }>
+  chains: string[]
+  credits_used: number
+}
+
 export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageProps) {
   const isUser = message.role === "user"
   const isProcessingTool =
@@ -128,20 +162,99 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
         try {
           const result = toolInvocation.result
           let tokenData: TokenData | null = null
+          let errorInfo: { error: string; suggestion?: string; details?: string } | null = null
 
           // Handle different result formats
           if (typeof result === "string") {
             const parsed = JSON.parse(result)
-            tokenData = parsed.token_data || parsed.component_data
+            if (parsed.error) {
+              errorInfo = parsed
+            } else {
+              tokenData = parsed.token_data || parsed.component_data
+            }
           } else if (result && typeof result === "object") {
-            tokenData = result.token_data || result.component_data || result
+            if (result.error) {
+              errorInfo = result
+            } else {
+              tokenData = result.token_data || result.component_data || result
+            }
+          }
+
+          // Show error state
+          if (errorInfo) {
+            return (
+              <div
+                key={toolIndex}
+                className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <span className="font-medium">Token Information Error</span>
+                </div>
+                <p className="text-sm mb-2">{errorInfo.error}</p>
+                {errorInfo.suggestion && (
+                  <p className="text-sm text-red-600 bg-red-50/50 p-2 rounded-lg">
+                    💡 <strong>Suggestion:</strong> {errorInfo.suggestion}
+                  </p>
+                )}
+                {errorInfo.details && (
+                  <details className="mt-2">
+                    <summary className="text-xs cursor-pointer hover:text-red-800">Technical Details</summary>
+                    <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">{errorInfo.details}</pre>
+                  </details>
+                )}
+              </div>
+            )
           }
 
           if (tokenData && tokenData.name && tokenData.symbol) {
             return <TokenInfoCompact key={toolIndex} tokenInfo={tokenData} />
           }
+
+          // Fallback: No data available
+          return (
+            <div
+              key={toolIndex}
+              className="rounded-2xl p-4 bg-orange-100/20 backdrop-blur-md border border-orange-300/50 text-orange-700"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <AlertCircle className="h-4 w-4" />
+                <span className="font-medium">No Token Data Available</span>
+              </div>
+              <p className="text-sm mb-3">Unable to retrieve token information. This could be due to:</p>
+              <ul className="text-sm space-y-1 ml-4 list-disc">
+                <li>Token not found in database</li>
+                <li>Invalid token symbol or name</li>
+                <li>API rate limiting or connectivity issues</li>
+                <li>Token not supported by the data provider</li>
+              </ul>
+              <div className="mt-3 p-2 bg-orange-50/50 rounded-lg">
+                <p className="text-xs">
+                  💡 <strong>Try:</strong> Check the token symbol spelling or try a different token
+                </p>
+              </div>
+            </div>
+          )
         } catch (error) {
           console.error("Error parsing token data:", error)
+          return (
+            <div
+              key={toolIndex}
+              className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <AlertCircle className="h-4 w-4" />
+                <span className="font-medium">Token Data Parse Error</span>
+              </div>
+              <p className="text-sm mb-2">Failed to parse token information response</p>
+              <details>
+                <summary className="text-xs cursor-pointer hover:text-red-800">Raw Response</summary>
+                <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">
+                  {JSON.stringify(toolInvocation.result, null, 2)}
+                </pre>
+              </details>
+            </div>
+          )
         }
         return null
 
@@ -150,13 +263,49 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
         try {
           const result = toolInvocation.result
           let poolsData: PoolData[] | null = null
+          let errorInfo: { error: string; suggestion?: string; details?: string } | null = null
 
           // Handle different result formats
           if (typeof result === "string") {
             const parsed = JSON.parse(result)
-            poolsData = parsed.pools_data
+            if (parsed.error) {
+              errorInfo = parsed
+            } else {
+              poolsData = parsed.pools_data
+            }
           } else if (result && typeof result === "object") {
-            poolsData = result.pools_data || (Array.isArray(result) ? result : null)
+            if (result.error) {
+              errorInfo = result
+            } else {
+              poolsData = result.pools_data || (Array.isArray(result) ? result : null)
+            }
+          }
+
+          // Show error state
+          if (errorInfo) {
+            return (
+              <div
+                key={toolIndex}
+                className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <span className="font-medium">Trending Pools Error</span>
+                </div>
+                <p className="text-sm mb-2">{errorInfo.error}</p>
+                {errorInfo.suggestion && (
+                  <p className="text-sm text-red-600 bg-red-50/50 p-2 rounded-lg">
+                    💡 <strong>Suggestion:</strong> {errorInfo.suggestion}
+                  </p>
+                )}
+                {errorInfo.details && (
+                  <details className="mt-2">
+                    <summary className="text-xs cursor-pointer hover:text-red-800">Technical Details</summary>
+                    <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">{errorInfo.details}</pre>
+                  </details>
+                )}
+              </div>
+            )
           }
 
           if (poolsData && Array.isArray(poolsData) && poolsData.length > 0) {
@@ -169,8 +318,51 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
               />
             )
           }
+
+          // Fallback: No data available
+          return (
+            <div
+              key={toolIndex}
+              className="rounded-2xl p-4 bg-orange-100/20 backdrop-blur-md border border-orange-300/50 text-orange-700"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <AlertCircle className="h-4 w-4" />
+                <span className="font-medium">No Trending Pools Available</span>
+              </div>
+              <p className="text-sm mb-3">Unable to retrieve trending pools data. This could be due to:</p>
+              <ul className="text-sm space-y-1 ml-4 list-disc">
+                <li>No active pools on the specified network</li>
+                <li>API rate limiting or connectivity issues</li>
+                <li>Network temporarily unavailable</li>
+                <li>Invalid network parameter</li>
+              </ul>
+              <div className="mt-3 p-2 bg-orange-50/50 rounded-lg">
+                <p className="text-xs">
+                  💡 <strong>Try:</strong> Check the network name or try again in a few minutes
+                </p>
+              </div>
+            </div>
+          )
         } catch (error) {
           console.error("Error parsing pools data:", error)
+          return (
+            <div
+              key={toolIndex}
+              className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <AlertCircle className="h-4 w-4" />
+                <span className="font-medium">Pools Data Parse Error</span>
+              </div>
+              <p className="text-sm mb-2">Failed to parse trending pools response</p>
+              <details>
+                <summary className="text-xs cursor-pointer hover:text-red-800">Raw Response</summary>
+                <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">
+                  {JSON.stringify(toolInvocation.result, null, 2)}
+                </pre>
+              </details>
+            </div>
+          )
         }
         return null
 
@@ -179,20 +371,200 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
         try {
           const result = toolInvocation.result
           let pairsData: DexPairData[] | null = null
+          let errorInfo: { error: string; suggestion?: string; details?: string } | null = null
 
           // Handle different result formats
           if (typeof result === "string") {
             const parsed = JSON.parse(result)
-            pairsData = parsed.pairs_data || (parsed.pair_data ? [parsed.pair_data] : null)
+            if (parsed.error) {
+              errorInfo = parsed
+            } else {
+              pairsData = parsed.pairs_data || (parsed.pair_data ? [parsed.pair_data] : null)
+            }
           } else if (result && typeof result === "object") {
-            pairsData = result.pairs_data || (result.pair_data ? [result.pair_data] : null)
+            if (result.error) {
+              errorInfo = result
+            } else {
+              pairsData = result.pairs_data || (result.pair_data ? [result.pair_data] : null)
+            }
+          }
+
+          // Show error state
+          if (errorInfo) {
+            return (
+              <div
+                key={toolIndex}
+                className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <span className="font-medium">DEX Pairs Error</span>
+                </div>
+                <p className="text-sm mb-2">{errorInfo.error}</p>
+                {errorInfo.suggestion && (
+                  <p className="text-sm text-red-600 bg-red-50/50 p-2 rounded-lg">
+                    💡 <strong>Suggestion:</strong> {errorInfo.suggestion}
+                  </p>
+                )}
+                {errorInfo.details && (
+                  <details className="mt-2">
+                    <summary className="text-xs cursor-pointer hover:text-red-800">Technical Details</summary>
+                    <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">{errorInfo.details}</pre>
+                  </details>
+                )}
+              </div>
+            )
           }
 
           if (pairsData && Array.isArray(pairsData) && pairsData.length > 0) {
             return <DexPairsCard key={toolIndex} pairs={pairsData} onTokenClick={onTokenClick} />
           }
+
+          // Fallback: No data available
+          return (
+            <div
+              key={toolIndex}
+              className="rounded-2xl p-4 bg-orange-100/20 backdrop-blur-md border border-orange-300/50 text-orange-700"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <AlertCircle className="h-4 w-4" />
+                <span className="font-medium">No DEX Pairs Found</span>
+              </div>
+              <p className="text-sm mb-3">Unable to find DEX pairs. This could be due to:</p>
+              <ul className="text-sm space-y-1 ml-4 list-disc">
+                <li>No pairs found for the search query</li>
+                <li>Invalid token symbol or pair address</li>
+                <li>Unsupported blockchain network</li>
+                <li>API rate limiting or connectivity issues</li>
+              </ul>
+              <div className="mt-3 p-2 bg-orange-50/50 rounded-lg">
+                <p className="text-xs">
+                  💡 <strong>Try:</strong> Use different search terms or check the token symbol spelling
+                </p>
+              </div>
+            </div>
+          )
         } catch (error) {
           console.error("Error parsing DEX pairs data:", error)
+          return (
+            <div
+              key={toolIndex}
+              className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <AlertCircle className="h-4 w-4" />
+                <span className="font-medium">DEX Pairs Parse Error</span>
+              </div>
+              <p className="text-sm mb-2">Failed to parse DEX pairs response</p>
+              <details>
+                <summary className="text-xs cursor-pointer hover:text-red-800">Raw Response</summary>
+                <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">
+                  {JSON.stringify(toolInvocation.result, null, 2)}
+                </pre>
+              </details>
+            </div>
+          )
+        }
+        return null
+
+      case "get_wallet_analysis":
+        try {
+          const result = toolInvocation.result
+          let walletData: WalletData | null = null
+          let errorInfo: { error: string; suggestion?: string; details?: string } | null = null
+
+          // Handle different result formats
+          if (typeof result === "string") {
+            const parsed = JSON.parse(result)
+            if (parsed.error) {
+              errorInfo = parsed
+            } else {
+              walletData = parsed.wallet_data
+            }
+          } else if (result && typeof result === "object") {
+            if (result.error) {
+              errorInfo = result
+            } else {
+              walletData = result.wallet_data || result
+            }
+          }
+
+          // Show error state
+          if (errorInfo) {
+            return (
+              <div
+                key={toolIndex}
+                className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <span className="font-medium">Wallet Analysis Error</span>
+                </div>
+                <p className="text-sm mb-2">{errorInfo.error}</p>
+                {errorInfo.suggestion && (
+                  <p className="text-sm text-red-600 bg-red-50/50 p-2 rounded-lg">
+                    💡 <strong>Suggestion:</strong> {errorInfo.suggestion}
+                  </p>
+                )}
+                {errorInfo.details && (
+                  <details className="mt-2">
+                    <summary className="text-xs cursor-pointer hover:text-red-800">Technical Details</summary>
+                    <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">{errorInfo.details}</pre>
+                  </details>
+                )}
+              </div>
+            )
+          }
+
+          // Show wallet data if available
+          if (walletData && walletData.address && walletData.summary) {
+            return <WalletAnalysisCard key={toolIndex} walletData={walletData} />
+          }
+
+          // Fallback: No data available
+          return (
+            <div
+              key={toolIndex}
+              className="rounded-2xl p-4 bg-orange-100/20 backdrop-blur-md border border-orange-300/50 text-orange-700"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <AlertCircle className="h-4 w-4" />
+                <span className="font-medium">No Wallet Data Available</span>
+              </div>
+              <p className="text-sm mb-3">Unable to retrieve wallet analysis data. This could be due to:</p>
+              <ul className="text-sm space-y-1 ml-4 list-disc">
+                <li>Invalid wallet address format</li>
+                <li>Wallet has no recent transactions</li>
+                <li>API rate limiting or connectivity issues</li>
+                <li>Wallet is on an unsupported network</li>
+              </ul>
+              <div className="mt-3 p-2 bg-orange-50/50 rounded-lg">
+                <p className="text-xs">
+                  💡 <strong>Try:</strong> Double-check the wallet address or try again in a few minutes
+                </p>
+              </div>
+            </div>
+          )
+        } catch (error) {
+          console.error("Error parsing wallet data:", error)
+          return (
+            <div
+              key={toolIndex}
+              className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <AlertCircle className="h-4 w-4" />
+                <span className="font-medium">Parse Error</span>
+              </div>
+              <p className="text-sm mb-2">Failed to parse wallet analysis response</p>
+              <details>
+                <summary className="text-xs cursor-pointer hover:text-red-800">Raw Response</summary>
+                <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">
+                  {JSON.stringify(toolInvocation.result, null, 2)}
+                </pre>
+              </details>
+            </div>
+          )
         }
         return null
 
