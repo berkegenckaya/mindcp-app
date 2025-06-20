@@ -114,7 +114,7 @@ export default function ChatPage() {
         id: "welcome-message",
         role: "assistant",
         content:
-          "Hello! I'm your enhanced on-chain analysis agent. I can help you with:\n\n• **Token Information** - Get details about any cryptocurrency\n• **DEX Pairs** - Search and analyze trading pairs\n• **Trending Pools** - Discover popular liquidity pools\n• **Price Analysis** - Real-time market data\n\nTry asking: 'What's the price of ETH?', 'Search for PEPE pairs', or 'Show trending pools'",
+          "Hello! I'm your enhanced on-chain analysis agent. I can help you with:\n\n• **Token Information** - Get details about any cryptocurrency\n\n• **DEX Pairs** - Search and analyze trading pairs\n\n• **Trending Pools** - Discover popular liquidity pools\n\n• **Price Analysis** - Real-time market data\n\n• **Wallet Analysis** - Review wallet balances, recent transactions, and portfolio performance\n\nTry asking: 'What's the price of ETH?', 'Search for PEPE pairs', or 'Show trending pools'",
       },
     ],
     onError: (error) => {
