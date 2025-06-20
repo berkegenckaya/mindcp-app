@@ -91,7 +91,7 @@ export function AgentDashboard() {
       <h2 className="text-xl font-semibold ">Your AI Agents</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
        <FancyCard
-        title="On-Chain Data Agent"
+        title="On-Chain Analyist Agent"
         description="Analyzes blockchain data and provides insights on transactions, trends, and anomalies."
         icon={<Bot className="h-5 w-5 text-white" />}
         href="/chat/1?data=%7B%22id%22%3A1%2C%22name%22%3A%22On-Chain%20Analyst%22%2C%22description%22%3A%22Analyzes%20blockchain%20data%20and%20generates%20reports%20on%20token%20performance%20and%20trends%22%2C%22type%22%3A%22analytics%22%2C%22status%22%3A%22active%22%2C%22tools%22%3A%5B%22coingecko%22%2C%22dexscrenner%22%2C%22mindcp%22%2C%22openai-gpt-4o-mini%22%5D%2C%22capabilities%22%3A%5B%22on-chain%22%2C%22data-analysis%22%2C%22data-visualization%22%5D%7D"
