@@ -173,22 +173,27 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div className="w-full max-w-full">
       {pairs.map((pair, index) => (
         <Card
           key={pair.id}
-          className="relative group rounded-2xl border border-white/35 bg-white/18 backdrop-blur-md shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)] transition-all duration-300 hover:bg-white/26 mb-6"
+          className="
+            relative group rounded-2xl border border-white/35
+            bg-white/18 backdrop-blur-md
+            shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)]
+            transition-all duration-300 hover:bg-white/26 mb-4 sm:mb-6
+          "
         >
           {/* Header with Token Image */}
-          <CardHeader className="pb-4">
-            <div className="flex items-center gap-4">
+          <CardHeader className="pb-1 sm:pb-4 px-1 sm:px-6">
+            <div className="flex items-start  gap-1 sm:gap-4">
               {/* Token Image */}
-              <div className="relative h-16 w-16 flex-shrink-0">
+              <div className="relative h-10 w-10 sm:h-16 sm:w-16 flex-shrink-0">
                 {pair.image_url ? (
                   <img
                     src={pair.image_url || "/placeholder.svg"}
                     alt={pair.baseToken.symbol}
-                    className="h-16 w-16 rounded-xl object-cover border-2 border-white/30"
+                    className="h-12 w-12 sm:h-16 sm:w-16 rounded-xl object-cover border-2 border-white/30"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement
                       target.style.display = "none"
@@ -202,31 +207,31 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                 <div
                   className={`${pair.image_url ? "hidden" : ""} relative z-10 flex h-full w-full items-center justify-center rounded-xl bg-gradient-to-br from-[#c6a9ff] to-[#ffcf9f] shadow-inner`}
                 >
-                  <BarChart3 className="h-8 w-8 text-white" />
+                  <BarChart3 className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
                 </div>
               </div>
 
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <CardTitle className="text-2xl bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+                <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
+                  <CardTitle className="text-lg sm:text-2xl bg-black bg-clip-text text-transparent">
                     {pair.name}
                   </CardTitle>
                   {pair.boosts && pair.boosts > 0 && (
-                    <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0">
+                    <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0 text-xs">
                       <Star className="h-3 w-3 mr-1" />
                       Boosted
                     </Badge>
                   )}
                 </div>
 
-                <div className="flex items-center gap-2 flex-wrap mb-3">
-                  <Badge variant="outline" className="bg-purple-50/20 text-purple-700 border-purple-300/50">
+                <div className="flex items-center gap-1 sm:gap-2 flex-wrap mb-2 sm:mb-3">
+                  <Badge variant="outline" className="bg-purple-50/20 text-purple-700 border-purple-300/50 text-xs">
                     {getChainDisplayName(pair.chainId)}
                   </Badge>
-                  <Badge variant="outline" className="bg-blue-50/20 text-blue-700 border-blue-300/50">
+                  <Badge variant="outline" className="bg-blue-50/20 text-blue-700 border-blue-300/50 text-xs">
                     {pair.dexId.toUpperCase()}
                   </Badge>
-                  {pair.labels?.map((label) => (
+                  {pair.labels?.slice(0, 2).map((label) => (
                     <Badge
                       key={label}
                       variant="outline"
@@ -238,131 +243,153 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                   {pair.pairCreatedAt && (
                     <Badge variant="outline" className="bg-green-50/20 text-green-700 border-green-300/50 text-xs">
                       <Calendar className="h-3 w-3 mr-1" />
-                      {pair.pairCreatedAt}
+                      <span className="hidden sm:inline">{pair.pairCreatedAt}</span>
+                      <span className="sm:hidden">Created</span>
                     </Badge>
                   )}
                 </div>
 
                 {/* Price and Change */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 sm:gap-4">
                   <div>
-                    <div className="text-3xl font-bold text-gray-900">{pair.price}</div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-xl sm:text-3xl font-bold text-gray-900">{pair.price}</div>
+                    <div className="text-xs sm:text-sm text-gray-600">
                       ≈ {pair.priceNative} {pair.quoteToken.symbol}
                     </div>
                   </div>
-                  <div className={`flex items-center gap-2 ${getTrendColor(pair.price_trend)}`}>
+                  <div className={`flex items-center gap-1 sm:gap-2 ${getTrendColor(pair.price_trend)}`}>
                     {getTrendIcon(pair.price_trend)}
-                    <span className="text-xl font-semibold">{pair.price_change_24h}</span>
+                    <span className="text-base sm:text-xl font-semibold">{pair.price_change_24h}</span>
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1 sm:gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => window.open(pair.url, "_blank")}
-                  className="bg-white/10 hover:bg-white/20 border-white/30"
+                  className="bg-white/10 hover:bg-white/20 border-white/30 text-xs sm:text-sm"
                 >
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  DexScreener
+                  <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">DexScreener</span>
+                  <span className="hidden">View</span>
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => copyToClipboard(pair.pairAddress, pair.id)}
-                  className="bg-white/10 hover:bg-white/20 border-white/30"
+                  className="bg-white/10 hover:bg-white/20 border-white/30 text-xs sm:text-sm"
                 >
                   {copied === pair.id ? (
-                    <Check className="h-4 w-4 mr-2 text-green-500" />
+                    <Check className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 text-green-500" />
                   ) : (
-                    <Copy className="h-4 w-4 mr-2" />
+                    <Copy className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                   )}
-                  Copy Address
+                  <span className="hidden sm:inline">Copy Address</span>
+                  <span className="hidden">Copy</span>
                 </Button>
               </div>
             </div>
           </CardHeader>
 
-          <CardContent>
+          <CardContent className="p-3 sm:p-6 pt-0">
             <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="grid w-full grid-cols-4 bg-white/20 backdrop-blur-sm">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="trading">Trading</TabsTrigger>
-                <TabsTrigger value="liquidity">Liquidity</TabsTrigger>
-                <TabsTrigger value="info">Info</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-4 bg-white/20 backdrop-blur-sm text-xs sm:text-sm">
+              
+                <TabsTrigger value="overview" className="text-xs sm:text-sm">
+                  Overview
+                </TabsTrigger>
+                <TabsTrigger value="trading" className="text-xs sm:text-sm">
+                  Trading
+                </TabsTrigger>
+                <TabsTrigger value="liquidity" className="text-xs sm:text-sm">
+                  Liquidity
+                </TabsTrigger>
+                <TabsTrigger value="info" className="text-xs sm:text-sm">
+                  Info
+                </TabsTrigger>
               </TabsList>
 
               {/* Overview Tab */}
-              <TabsContent value="overview" className="mt-4 space-y-4">
+              <TabsContent value="overview" className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
+                
                 {/* Key Metrics Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4">
+                <div className="grid grid-cols-2 gap-2 sm:gap-4">
+                  
+                  <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+                                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-purple-500/5  opacity-100 transition-opacity duration-300 pointer-events-none" />
+
                     <div className="flex items-center gap-2 mb-2">
-                      <DollarSign className="h-4 w-4 text-green-500" />
-                      <span className="text-xs font-medium text-gray-600">MCap</span>
+                      <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 text-black-500" />
+                      <span className="text-xs sm:text-sm font-medium text-gray-600">Market Cap</span>
                     </div>
-                    <div className="text-lg font-bold text-gray-900">{pair.market_cap}</div>
+                    <div className="text-sm sm:text-lg font-bold text-gray-900">{pair.market_cap}</div>
                   </div>
 
-                 {/*  <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <BarChart3 className="h-4 w-4 text-blue-500" />
-                      <span className="text-sm font-medium text-gray-600">FDV</span>
-                    </div>
-                    <div className="text-lg font-bold text-gray-900">{pair.fdv}</div>
-                  </div> */}
+                  <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+                                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-purple-500/5  opacity-100 transition-opacity duration-300 pointer-events-none" />
 
-                  <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <Activity className="h-4 w-4 text-purple-500" />
-                      <span className="text-sm font-medium text-gray-600">Volume 24h</span>
+                      <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 text-black-500" />
+                      <span className="text-xs sm:text-sm font-medium text-gray-600">FDV</span>
                     </div>
-                    <div className="text-lg font-bold text-gray-900">{pair.volume_24h}</div>
+                    <div className="text-sm sm:text-lg font-bold text-gray-900">{pair.fdv}</div>
                   </div>
 
-                  <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4">
+                  <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+                                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-purple-500/5  opacity-100 transition-opacity duration-300 pointer-events-none" />
+
                     <div className="flex items-center gap-2 mb-2">
-                      <Users className="h-4 w-4 text-orange-500" />
-                      <span className="text-sm font-medium text-gray-600">Liquidity</span>
+                      <Activity className="h-3 w-3 sm:h-4 sm:w-4 text-black-500" />
+                      <span className="text-xs sm:text-sm font-medium text-gray-600">Volume 24h</span>
                     </div>
-                    <div className="text-lg font-bold text-gray-900">{pair.liquidity}</div>
+                    <div className="text-sm sm:text-lg font-bold text-gray-900">{pair.volume_24h}</div>
+                  </div>
+
+                  <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+                                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-purple-500/5  opacity-100 transition-opacity duration-300 pointer-events-none" />
+
+                    <div className="flex items-center gap-2 mb-2">
+                      <Users className="h-3 w-3 sm:h-4 sm:w-4 text-black-500" />
+                      <span className="text-xs sm:text-sm font-medium text-gray-600">Liquidity</span>
+                    </div>
+                    <div className="text-sm sm:text-lg font-bold text-gray-900">{pair.liquidity}</div>
                   </div>
                 </div>
 
                 {/* Price Changes */}
-                <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4">
-                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-green-500" />
+                <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+                  <h3 className="text-sm sm:text-lg font-semibold mb-3 flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
                     Price Changes
                   </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
                     <div className="text-center">
-                      <div className="text-xs text-gray-600 mb-1">5 Minutes</div>
-                      <div className={`text-lg font-semibold ${getPriceChangeColor(pair.priceChanges.m5)}`}>
+                      <div className="text-xs text-gray-600 mb-1">5 Min</div>
+                      <div className={`text-sm sm:text-lg font-semibold ${getPriceChangeColor(pair.priceChanges.m5)}`}>
                         {pair.priceChanges.m5 > 0 ? "+" : ""}
                         {pair.priceChanges.m5.toFixed(2)}%
                       </div>
                     </div>
                     <div className="text-center">
                       <div className="text-xs text-gray-600 mb-1">1 Hour</div>
-                      <div className={`text-lg font-semibold ${getPriceChangeColor(pair.priceChanges.h1)}`}>
+                      <div className={`text-sm sm:text-lg font-semibold ${getPriceChangeColor(pair.priceChanges.h1)}`}>
                         {pair.priceChanges.h1 > 0 ? "+" : ""}
                         {pair.priceChanges.h1.toFixed(2)}%
                       </div>
                     </div>
                     <div className="text-center">
                       <div className="text-xs text-gray-600 mb-1">6 Hours</div>
-                      <div className={`text-lg font-semibold ${getPriceChangeColor(pair.priceChanges.h6)}`}>
+                      <div className={`text-sm sm:text-lg font-semibold ${getPriceChangeColor(pair.priceChanges.h6)}`}>
                         {pair.priceChanges.h6 > 0 ? "+" : ""}
                         {pair.priceChanges.h6.toFixed(2)}%
                       </div>
                     </div>
                     <div className="text-center">
                       <div className="text-xs text-gray-600 mb-1">24 Hours</div>
-                      <div className={`text-lg font-semibold ${getPriceChangeColor(pair.priceChanges.h24)}`}>
+                      <div className={`text-sm sm:text-lg font-semibold ${getPriceChangeColor(pair.priceChanges.h24)}`}>
                         {pair.priceChanges.h24 > 0 ? "+" : ""}
                         {pair.priceChanges.h24.toFixed(2)}%
                       </div>
@@ -372,40 +399,40 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
               </TabsContent>
 
               {/* Trading Tab */}
-              <TabsContent value="trading" className="mt-4 space-y-4">
+              <TabsContent value="trading" className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
                 {/* Volume Breakdown */}
-                <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4">
-                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                    <BarChart3 className="h-5 w-5 text-blue-500" />
+                <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+                  <h3 className="text-sm sm:text-lg font-semibold mb-3 flex items-center gap-2">
+                    <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
                     Volume Breakdown
                   </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
                     <div className="text-center">
-                      <div className="text-xs text-gray-600 mb-1">5 Minutes</div>
-                      <div className="text-lg font-semibold text-gray-900">{pair.volume_5m}</div>
+                      <div className="text-xs text-gray-600 mb-1">5 Min</div>
+                      <div className="text-sm sm:text-lg font-semibold text-gray-900">{pair.volume_5m}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-xs text-gray-600 mb-1">1 Hour</div>
-                      <div className="text-lg font-semibold text-gray-900">{pair.volume_1h}</div>
+                      <div className="text-sm sm:text-lg font-semibold text-gray-900">{pair.volume_1h}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-xs text-gray-600 mb-1">6 Hours</div>
-                      <div className="text-lg font-semibold text-gray-900">{pair.volume_6h}</div>
+                      <div className="text-sm sm:text-lg font-semibold text-gray-900">{pair.volume_6h}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-xs text-gray-600 mb-1">24 Hours</div>
-                      <div className="text-lg font-semibold text-gray-900">{pair.volume_24h}</div>
+                      <div className="text-sm sm:text-lg font-semibold text-gray-900">{pair.volume_24h}</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Transaction Analysis */}
-                <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4">
-                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                    <ArrowUpDown className="h-5 w-5 text-purple-500" />
+                <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+                  <h3 className="text-sm sm:text-lg font-semibold mb-3 flex items-center gap-2">
+                    <ArrowUpDown className="h-4 w-4 sm:h-5 sm:w-5 text-purple-500" />
                     Transaction Analysis
                   </h3>
-                  <div className="space-y-4">
+                  <div className="space-y-3 sm:space-y-4">
                     {[
                       { label: "24 Hours", data: pair.transactions.h24 },
                       { label: "6 Hours", data: pair.transactions.h6 },
@@ -416,10 +443,10 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                       return (
                         <div key={period.label} className="space-y-2">
                           <div className="flex justify-between items-center">
-                            <span className="text-sm font-medium text-gray-600">{period.label}</span>
-                            <span className="text-sm text-gray-600">{period.data.total} txns</span>
+                            <span className="text-xs sm:text-sm font-medium text-gray-600">{period.label}</span>
+                            <span className="text-xs sm:text-sm text-gray-600">{period.data.total} txns</span>
                           </div>
-                          <div className="flex gap-2 text-sm">
+                          <div className="flex gap-2 text-xs sm:text-sm">
                             <span className="text-green-600">Buys: {period.data.buys}</span>
                             <span className="text-red-600">Sells: {period.data.sells}</span>
                           </div>
@@ -438,46 +465,48 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
               </TabsContent>
 
               {/* Liquidity Tab */}
-              <TabsContent value="liquidity" className="mt-4 space-y-4">
-                <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4">
-                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                    <Users className="h-5 w-5 text-orange-500" />
+              <TabsContent value="liquidity" className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
+                <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+                  <h3 className="text-sm sm:text-lg font-semibold mb-3 flex items-center gap-2">
+                    <Users className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500" />
                     Liquidity Pool Details
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                     <div className="text-center">
-                      <div className="text-sm text-gray-600 mb-1">Total Liquidity</div>
-                      <div className="text-xl font-bold text-gray-900">{pair.liquidity}</div>
+                      <div className="text-xs sm:text-sm text-gray-600 mb-1">Total Liquidity</div>
+                      <div className="text-lg sm:text-xl font-bold text-gray-900">{pair.liquidity}</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-sm text-gray-600 mb-1">{pair.baseToken.symbol} Reserve</div>
-                      <div className="text-xl font-bold text-gray-900">{pair.liquidityBase}</div>
+                      <div className="text-xs sm:text-sm text-gray-600 mb-1">{pair.baseToken.symbol} Reserve</div>
+                      <div className="text-lg sm:text-xl font-bold text-gray-900">{pair.liquidityBase}</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-sm text-gray-600 mb-1">{pair.quoteToken.symbol} Reserve</div>
-                      <div className="text-xl font-bold text-gray-900">{pair.liquidityQuote}</div>
+                      <div className="text-xs sm:text-sm text-gray-600 mb-1">{pair.quoteToken.symbol} Reserve</div>
+                      <div className="text-lg sm:text-xl font-bold text-gray-900">{pair.liquidityQuote}</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Token Addresses */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4">
+                <div className="grid grid-cols-1 gap-3 sm:gap-4">
+                  <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
                     <h4 className="font-semibold mb-2 flex items-center gap-2">
                       <button
                         onClick={() => handleTokenClick(pair.baseToken.symbol, pair.chainId)}
-                        className="hover:text-purple-600 hover:underline transition-colors"
+                        className="hover:text-purple-600 hover:underline transition-colors text-sm sm:text-base"
                       >
                         {pair.baseToken.name} ({pair.baseToken.symbol})
                       </button>
                     </h4>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-mono text-gray-600">{formatAddress(pair.baseToken.address)}</span>
+                      <span className="text-xs font-mono text-gray-600 break-all sm:break-normal">
+                        {formatAddress(pair.baseToken.address)}
+                      </span>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => copyToClipboard(pair.baseToken.address, `base-${pair.id}`)}
-                        className="h-6 w-6 p-0"
+                        className="h-6 w-6 p-0 ml-2 flex-shrink-0"
                       >
                         {copied === `base-${pair.id}` ? (
                           <Check className="h-3 w-3 text-green-500" />
@@ -488,22 +517,24 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                     </div>
                   </div>
 
-                  <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4">
+                  <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
                     <h4 className="font-semibold mb-2 flex items-center gap-2">
                       <button
                         onClick={() => handleTokenClick(pair.quoteToken.symbol, pair.chainId)}
-                        className="hover:text-purple-600 hover:underline transition-colors"
+                        className="hover:text-purple-600 hover:underline transition-colors text-sm sm:text-base"
                       >
                         {pair.quoteToken.name} ({pair.quoteToken.symbol})
                       </button>
                     </h4>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-mono text-gray-600">{formatAddress(pair.quoteToken.address)}</span>
+                      <span className="text-xs font-mono text-gray-600 break-all sm:break-normal">
+                        {formatAddress(pair.quoteToken.address)}
+                      </span>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => copyToClipboard(pair.quoteToken.address, `quote-${pair.id}`)}
-                        className="h-6 w-6 p-0"
+                        className="h-6 w-6 p-0 ml-2 flex-shrink-0"
                       >
                         {copied === `quote-${pair.id}` ? (
                           <Check className="h-3 w-3 text-green-500" />
@@ -517,18 +548,18 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
               </TabsContent>
 
               {/* Info Tab */}
-              <TabsContent value="info" className="mt-4 space-y-4">
+              <TabsContent value="info" className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
                 {/* Links */}
                 {(pair.websites || pair.socials) && (
-                  <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4">
-                    <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                      <Info className="h-5 w-5 text-blue-500" />
+                  <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+                    <h3 className="text-sm sm:text-lg font-semibold mb-3 flex items-center gap-2">
+                      <Info className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
                       Project Links
                     </h3>
                     <div className="space-y-3">
                       {pair.websites && (
                         <div>
-                          <h4 className="text-sm font-medium text-gray-600 mb-2">Websites</h4>
+                          <h4 className="text-xs sm:text-sm font-medium text-gray-600 mb-2">Websites</h4>
                           <div className="flex flex-wrap gap-2">
                             {pair.websites.map((website, idx) => (
                               <Button
@@ -536,7 +567,7 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => window.open(website.url, "_blank")}
-                                className="bg-white/10 hover:bg-white/20 border-white/30"
+                                className="bg-white/10 hover:bg-white/20 border-white/30 text-xs"
                               >
                                 <Globe className="h-3 w-3 mr-2" />
                                 {website.label}
@@ -548,7 +579,7 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
 
                       {pair.socials && (
                         <div>
-                          <h4 className="text-sm font-medium text-gray-600 mb-2">Social Media</h4>
+                          <h4 className="text-xs sm:text-sm font-medium text-gray-600 mb-2">Social Media</h4>
                           <div className="flex flex-wrap gap-2">
                             {pair.socials.map((social, idx) => (
                               <Button
@@ -556,7 +587,7 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => window.open(social.url, "_blank")}
-                                className="bg-white/10 hover:bg-white/20 border-white/30"
+                                className="bg-white/10 hover:bg-white/20 border-white/30 text-xs"
                               >
                                 {getSocialIcon(social.type)}
                                 <span className="ml-2 capitalize">{social.type}</span>
@@ -570,19 +601,21 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                 )}
 
                 {/* Pair Contract */}
-                <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4">
-                  <h3 className="text-lg font-semibold mb-3">Pair Contract</h3>
+                <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+                  <h3 className="text-sm sm:text-lg font-semibold mb-3">Pair Contract</h3>
                   <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm text-gray-600">Contract Address</div>
-                      <div className="font-mono text-sm text-gray-900">{formatAddress(pair.pairAddress)}</div>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-xs sm:text-sm text-gray-600">Contract Address</div>
+                      <div className="font-mono text-xs sm:text-sm text-gray-900 break-all sm:break-normal">
+                        {formatAddress(pair.pairAddress)}
+                      </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 ml-2 flex-shrink-0">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => copyToClipboard(pair.pairAddress, `contract-${pair.id}`)}
-                        className="bg-white/10 hover:bg-white/20 border-white/30"
+                        className="bg-white/10 hover:bg-white/20 border-white/30 h-8 w-8 p-0"
                       >
                         {copied === `contract-${pair.id}` ? (
                           <Check className="h-3 w-3" />
@@ -594,7 +627,7 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                         variant="outline"
                         size="sm"
                         onClick={() => window.open(pair.url, "_blank")}
-                        className="bg-white/10 hover:bg-white/20 border-white/30"
+                        className="bg-white/10 hover:bg-white/20 border-white/30 h-8 w-8 p-0"
                       >
                         <ExternalLink className="h-3 w-3" />
                       </Button>

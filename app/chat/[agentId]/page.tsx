@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, Send, Bot, Paperclip, MoreVertical, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -18,36 +18,6 @@ interface Agent {
   tools: string[]
   capabilities?: string[]
 }
-
-const mockAgents: Agent[] = [
-  {
-    id: 1,
-    name: "Token Info Agent",
-    description: "Get information about cryptocurrency tokens using multiple APIs",
-    type: "analytics",
-    status: "active",
-    tools: ["CoinGecko API", "DexScreener API", "Gecko Terminal API", "OpenAI GPT-4o"],
-    capabilities: ["token-info", "price-analysis", "market-data", "dex-pairs"],
-  },
-  {
-    id: 2,
-    name: "Creative Writer",
-    description: "Content creation and copy-writing specialist",
-    type: "creative",
-    status: "idle",
-    tools: ["OpenAI GPT-4", "Hemingway-Lint", "MindCP"],
-    capabilities: ["tone-shift", "SEO-optimize", "multilingual-draft"],
-  },
-  {
-    id: 3,
-    name: "DevOps Coder",
-    description: "Automates code review and opens GitHub pull-requests",
-    type: "development",
-    status: "training",
-    tools: ["GitHub API", "ESLint", "MindCP"],
-    capabilities: ["static-analysis", "review-comments", "open-pull-request"],
-  },
-]
 
 // Neon Button Component
 function NeonButton({
@@ -96,11 +66,46 @@ function NeonButton({
 export default function ChatPage() {
   const params = useParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const agentId = Number.parseInt(params.agentId as string)
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
   const [connectionError, setConnectionError] = React.useState<string | null>(null)
 
-  const agent = mockAgents.find((a) => a.id === agentId)
+  // Get agent data from URL params
+  const [agent, setAgent] = React.useState<Agent | null>(null)
+
+  React.useEffect(() => {
+    const agentDataParam = searchParams.get("data")
+    if (agentDataParam) {
+      try {
+        const agentData = JSON.parse(decodeURIComponent(agentDataParam))
+        setAgent(agentData)
+      } catch (error) {
+        console.error("Failed to parse agent data:", error)
+        // Fallback to default agent data
+        setAgent({
+          id: agentId,
+          name: `Agent ${agentId}`,
+          description: "AI Assistant",
+          type: "analytics",
+          status: "active",
+          tools: ["OpenAI GPT-4o"],
+          capabilities: ["general-assistance"],
+        })
+      }
+    } else {
+      // Fallback if no data provided
+      setAgent({
+        id: agentId,
+        name: `Agent ${agentId}`,
+        description: "AI Assistant",
+        type: "analytics",
+        status: "active",
+        tools: ["OpenAI GPT-4o"],
+        capabilities: ["general-assistance"],
+      })
+    }
+  }, [agentId, searchParams])
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, error, append, reload } = useChat({
     api: "/api/chat",
@@ -167,7 +172,7 @@ export default function ChatPage() {
             Agent not found
           </h1>
           <NeonButton onClick={() => router.push("/")} className="mt-4">
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <ArrowLeft className="mr-2 text-black h-4 w-4" />
             Back to Agents
           </NeonButton>
         </div>
@@ -176,9 +181,9 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex h-screen flex-col bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="flex md:h-[98vh] h-screen flex-col bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
-      <div className="border-b border-white/35 bg-white/18 backdrop-blur-md px-4 py-3 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)]">
+      <div className="border-b border-white/35 bg-white/18 backdrop-blur-md px-4 py-3 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1),0_1px_4px_rgba(0,0,0,0.14)]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <NeonButton variant="ghost" size="sm" onClick={() => router.push("/")} className="md:hidden">
@@ -199,7 +204,7 @@ export default function ChatPage() {
               <div className="flex items-center gap-2">
                 <Badge
                   variant={agent.status === "active" ? "default" : agent.status === "idle" ? "secondary" : "outline"}
-                  className="text-xs bg-white/20 backdrop-blur-sm border-white/30"
+                  className="text-xs bg-black/80 backdrop-blur-sm border-white/30"
                 >
                   {agent.status}
                 </Badge>
@@ -208,10 +213,10 @@ export default function ChatPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <NeonButton variant="ghost" size="sm" onClick={() => router.push("/")} className="hidden md:flex">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Agents
+          <div className="flex text-black items-center gap-2">
+            <NeonButton variant="ghost" size="sm" onClick={() => router.push("/agents")} className="hidden md:flex">
+              <ArrowLeft className="mr-2 text-black h-4 w-4" />
+              <p className="text-black">Back to Agents</p>
             </NeonButton>
             <NeonButton variant="ghost" size="sm">
               <MoreVertical className="h-4 w-4" />
@@ -265,20 +270,20 @@ export default function ChatPage() {
       </div>
 
       {/* Input */}
-      <div className="border-t border-white/35 bg-white/18 backdrop-blur-md p-4 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)]">
+      <div className="border-t border-white/35 bg-white/18 backdrop-blur-md p-4 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_1px_4px_rgba(0,0,0,0.14)]">
         <div className="mx-auto max-w-4xl">
-          <form onSubmit={handleSubmit} className="flex gap-3">
+          <form onSubmit={handleSubmit} className="flex md:gap-3">
             <NeonButton variant="outline" size="sm" className="flex-shrink-0" >
               <Paperclip className="h-4 w-4" />
             </NeonButton>
-            <div className="flex-1 flex gap-3">
-              <Input
-                value={input}
-                onChange={handleInputChange}
-                placeholder={`Try: "What's ETH price?", "Search PEPE pairs", "Show trending pools"...`}
-                className="flex-1 bg-white/20 backdrop-blur-sm border-white/30 text-gray-900 placeholder:text-gray-500 focus:border-purple-400 focus:ring-purple-400/20"
-                disabled={isLoading}
-              />
+            <div className="flex-1 flex items-center gap-3">
+             <Input
+                  value={input}
+                  onChange={handleInputChange}
+                  placeholder={`Ask me anything about crypto, tokens, or DeFi...`}
+                  className="flex-1 h-12 sm:pl-4 sm:pr-12 bg-white/10 backdrop-blur-md border-2 border-gray/20 rounded-2xl text-gray-900 placeholder:text-gray-400 focus:border-purple-400/60 focus:ring-4 focus:ring-purple-400/10 focus:bg-white/15 hover:bg-white/12 hover:border-gray/50 transition-all duration-300 shadow-lg shadow-black/5 text-sm font-medium"
+                  disabled={isLoading}
+                />
               <NeonButton  disabled={!input.trim() || isLoading} className="flex-shrink-0">
                 <Send className="h-4 w-4" />
               </NeonButton>

@@ -1,4 +1,10 @@
-import type { DexScreenerResponse, DexScreenerSearchResponse, DexScreenerPair, FormattedDexPair } from "./types"
+import type {
+  DexScreenerResponse,
+  DexScreenerSearchResponse,
+  DexScreenerTokenResponse,
+  DexScreenerPair,
+  FormattedDexPair,
+} from "./types"
 
 const DEXSCREENER_BASE_URL = "https://api.dexscreener.com/latest"
 
@@ -80,6 +86,96 @@ export async function searchDexScreenerPairs(query: string): Promise<FormattedDe
   }
 }
 
+// UPDATED FUNCTION: Fetch pairs by token addresses with proper schema handling
+export async function fetchDexScreenerTokenPairs(
+  chainId: string,
+  tokenAddresses: string[],
+): Promise<FormattedDexPair[] | null> {
+  try {
+    console.log(`Fetching DexScreener token pairs for: ${chainId} - ${tokenAddresses.join(", ")}`)
+
+    // Validate input
+    if (!tokenAddresses || tokenAddresses.length === 0) {
+      throw new Error("Token addresses array cannot be empty")
+    }
+
+    if (tokenAddresses.length > 30) {
+      throw new Error("Maximum 30 token addresses allowed per request")
+    }
+
+    // Join addresses with comma
+    const addressesParam = tokenAddresses.join(",")
+    const url = `https://api.dexscreener.com/tokens/v1/${chainId}/${addressesParam}`
+    console.log("DexScreener Token API URL:", url)
+
+    const response = await fetch(url, {
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "Mozilla/5.0 (compatible; DexBot/1.0)",
+        // Add additional headers to avoid Cloudflare blocking
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+      },
+    })
+
+    console.log("DexScreener Token API Response status:", response.status)
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error("DexScreener Token API Error:", errorText)
+      throw new Error(`Failed to fetch token pairs: ${response.status} - ${errorText}`)
+    }
+
+    // Token pairs endpoint returns direct array, not wrapped in object
+    const data: DexScreenerTokenResponse = await response.json()
+    console.log("DexScreener token pairs raw response:", data)
+/*     console.log("DexScreener token pairs results:", data?.length || 0, "pairs found")
+ */
+    // Check if data is array and has content
+    if (!Array.isArray(data) || data.length === 0) {
+      console.log("No pairs found in token response")
+      return null
+    }
+
+    // Format and return results
+    return data.map(formatDexPair).filter((pair): pair is FormattedDexPair => pair !== null)
+  } catch (error) {
+    console.error("Error in fetchDexScreenerTokenPairs:", error)
+    return null
+  }
+}
+
+// NEW FUNCTION: Fetch pairs by token addresses across multiple chains
+export async function fetchMultiChainTokenPairs(
+  tokenAddress: string,
+  chains: string[],
+  limit: number,
+): Promise<Record<string, any>> {
+  const results: Record<string, any> = {}
+
+  for (const chain of chains) {
+    try {
+      const pairs = await fetchDexScreenerTokenPairs(chain, [tokenAddress])
+      const limitedPairs = pairs?.slice(0, limit) || []
+
+      results[chain] = {
+        pairs_count: limitedPairs.length,
+        pairs: limitedPairs,
+      }
+    } catch (error) {
+      console.error(`Error fetching pairs from ${chain}:`, error)
+      results[chain] = {
+        pairs_count: 0,
+        pairs: [],
+        error: error instanceof Error ? error.message : "Unknown error",
+      }
+    }
+  }
+
+  return results
+}
+
+// UPDATED FORMAT FUNCTION: Handle dynamic properties properly
 function formatDexPair(pair: DexScreenerPair): FormattedDexPair | null {
   try {
     // Format numbers
@@ -99,12 +195,30 @@ function formatDexPair(pair: DexScreenerPair): FormattedDexPair | null {
       return num.toFixed(0)
     }
 
-    const priceChange24h = pair.priceChange?.h24 || 0
+    // Safely extract values from dynamic objects
+    const getValueFromDynamicObject = (obj: Record<string, any>, key: string, defaultValue: any = 0) => {
+      return obj && obj[key] !== undefined ? obj[key] : defaultValue
+    }
+
+    // Extract price changes
+    const priceChange24h = getValueFromDynamicObject(pair.priceChange, "h24", 0)
+    const priceChange6h = getValueFromDynamicObject(pair.priceChange, "h6", 0)
+    const priceChange1h = getValueFromDynamicObject(pair.priceChange, "h1", 0)
+    const priceChange5m = getValueFromDynamicObject(pair.priceChange, "m5", 0)
+
+    // Extract volumes
+    const volume24h = getValueFromDynamicObject(pair.volume, "h24", 0)
+    const volume6h = getValueFromDynamicObject(pair.volume, "h6", 0)
+    const volume1h = getValueFromDynamicObject(pair.volume, "h1", 0)
+    const volume5m = getValueFromDynamicObject(pair.volume, "m5", 0)
+
+    // Extract transactions
+    const txns24h = getValueFromDynamicObject(pair.txns, "h24", { buys: 0, sells: 0 })
+    const txns6h = getValueFromDynamicObject(pair.txns, "h6", { buys: 0, sells: 0 })
+    const txns1h = getValueFromDynamicObject(pair.txns, "h1", { buys: 0, sells: 0 })
+    const txns5m = getValueFromDynamicObject(pair.txns, "m5", { buys: 0, sells: 0 })
+
     const price = Number(pair.priceUsd) || Number(pair.priceNative) || 0
-    const volume24h = pair.volume?.h24 || 0
-    const volume6h = pair.volume?.h6 || 0
-    const volume1h = pair.volume?.h1 || 0
-    const volume5m = pair.volume?.m5 || 0
     const liquidity = pair.liquidity?.usd || 0
     const liquidityBase = pair.liquidity?.base || 0
     const liquidityQuote = pair.liquidity?.quote || 0
@@ -113,7 +227,7 @@ function formatDexPair(pair: DexScreenerPair): FormattedDexPair | null {
 
     // Format creation date
     const pairCreatedAt = pair.pairCreatedAt
-      ? new Date(pair.pairCreatedAt).toLocaleDateString("en-US", {
+      ? new Date(pair.pairCreatedAt * 1000).toLocaleDateString("en-US", {
           year: "numeric",
           month: "short",
           day: "numeric",
@@ -154,36 +268,35 @@ function formatDexPair(pair: DexScreenerPair): FormattedDexPair | null {
       fdv: formatNumber(fdv),
       transactions: {
         h24: {
-          buys: pair.txns?.h24?.buys || 0,
-          sells: pair.txns?.h24?.sells || 0,
-          total: (pair.txns?.h24?.buys || 0) + (pair.txns?.h24?.sells || 0),
+          buys: txns24h.buys || 0,
+          sells: txns24h.sells || 0,
+          total: (txns24h.buys || 0) + (txns24h.sells || 0),
         },
         h6: {
-          buys: pair.txns?.h6?.buys || 0,
-          sells: pair.txns?.h6?.sells || 0,
-          total: (pair.txns?.h6?.buys || 0) + (pair.txns?.h6?.sells || 0),
+          buys: txns6h.buys || 0,
+          sells: txns6h.sells || 0,
+          total: (txns6h.buys || 0) + (txns6h.sells || 0),
         },
         h1: {
-          buys: pair.txns?.h1?.buys || 0,
-          sells: pair.txns?.h1?.sells || 0,
-          total: (pair.txns?.h1?.buys || 0) + (pair.txns?.h1?.sells || 0),
+          buys: txns1h.buys || 0,
+          sells: txns1h.sells || 0,
+          total: (txns1h.buys || 0) + (txns1h.sells || 0),
         },
         m5: {
-          buys: pair.txns?.m5?.buys || 0,
-          sells: pair.txns?.m5?.sells || 0,
-          total: (pair.txns?.m5?.buys || 0) + (pair.txns?.m5?.sells || 0),
+          buys: txns5m.buys || 0,
+          sells: txns5m.sells || 0,
+          total: (txns5m.buys || 0) + (txns5m.sells || 0),
         },
       },
       priceChanges: {
-        m5: pair.priceChange?.m5 || 0,
-        h1: pair.priceChange?.h1 || 0,
-        h6: pair.priceChange?.h6 || 0,
-        h24: pair.priceChange?.h24 || 0,
+        m5: priceChange5m,
+        h1: priceChange1h,
+        h6: priceChange6h,
+        h24: priceChange24h,
       },
       pairCreatedAt,
       url: pair.url,
       image_url: pair.info?.imageUrl,
-      header_url: pair.info?.header,
       websites: pair.info?.websites,
       socials: pair.info?.socials,
       boosts: pair.boosts?.active,
@@ -195,54 +308,18 @@ function formatDexPair(pair: DexScreenerPair): FormattedDexPair | null {
 }
 
 // Helper function to get supported chain IDs
-export function getSupportedChains(): string[] {
+export function getSupportedChains(): Array<{ id: string; name: string }> {
   return [
-    "ethereum",
-    "bsc",
-    "polygon",
-    "avalanche",
-    "fantom",
-    "cronos",
-    "arbitrum",
-    "optimism",
-    "base",
-    "solana",
-    "sui",
-    "aptos",
-    "near",
-    "aurora",
-    "harmony",
-    "moonbeam",
-    "moonriver",
-    "celo",
-    "fuse",
-    "okc",
-    "heco",
-    "kcc",
-    "velas",
-    "oasis",
-    "metis",
-    "syscoin",
-    "milkomeda",
-    "evmos",
-    "dogechain",
-    "kava",
-    "step",
-    "godwoken",
-    "callisto",
-    "wanchain",
-    "elastos",
-    "kardiachain",
-    "telos",
-    "thundercore",
-    "tomochain",
-    "smartbch",
-    "rsk",
-    "liquidchain",
-    "hoo",
-    "energi",
-    "astar",
-    "shiden",
+    { id: "ethereum", name: "Ethereum" },
+    { id: "bsc", name: "BSC" },
+    { id: "polygon", name: "Polygon" },
+    { id: "avalanche", name: "Avalanche" },
+    { id: "fantom", name: "Fantom" },
+    { id: "cronos", name: "Cronos" },
+    { id: "arbitrum", name: "Arbitrum" },
+    { id: "optimism", name: "Optimism" },
+    { id: "base", name: "Base" },
+    { id: "solana", name: "Solana" },
   ]
 }
 
@@ -274,5 +351,45 @@ export function normalizeChainName(chain: string): string | null {
   }
 
   const normalized = chain.toLowerCase().trim()
-  return chainMap[normalized] || (getSupportedChains().includes(normalized) ? normalized : null)
+  const supportedChains = getSupportedChains().map((c) => c.id)
+  return chainMap[normalized] || (supportedChains.includes(normalized) ? normalized : null)
+}
+
+// Helper function to validate token addresses
+export function validateTokenAddress(address: string, chainId: string): boolean {
+  if (!address || address.trim().length === 0) {
+    return false
+  }
+
+  const trimmedAddress = address.trim()
+
+  // Solana addresses are base58 encoded and typically 32-44 characters
+  if (chainId === "solana") {
+    return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(trimmedAddress)
+  }
+
+  // EVM chains use hex addresses starting with 0x
+  return /^0x[a-fA-F0-9]{40}$/.test(trimmedAddress)
+}
+
+// Rate Limiter
+export const rateLimiter = {
+  requests: [] as number[],
+  window: 60000, // 1 minute
+  maxRequests: 5,
+
+  canMakeRequest() {
+    this.clearOldRequests()
+    return this.requests.length < this.maxRequests
+  },
+
+  recordRequest() {
+    this.clearOldRequests()
+    this.requests.push(Date.now())
+  },
+
+  clearOldRequests() {
+    const now = Date.now()
+    this.requests = this.requests.filter((reqTime) => now - reqTime < this.window)
+  },
 }

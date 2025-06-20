@@ -1,7 +1,7 @@
 import { streamText } from "ai"
 import { openai } from "@ai-sdk/openai"
 import { getNetworkTrendingPoolsTool, getTokenInfoTool, getTrendingPoolsTool } from "@/app/tools/gecko-terminal"
-import { getDexPairInfoTool, searchDexPairsTool } from "@/app/tools/dexscreener"
+import { getDexPairInfoTool, searchDexPairsTool,getTokenPairsTool  } from "@/app/tools/dexscreener"
 import { getWalletAnalysisTool } from "@/app/tools/cielo"
 
 
@@ -28,14 +28,17 @@ TOKEN INFORMATION:
 1. get_coingecko_token_info - Get detailed information about ANY cryptocurrency token (preferred for token queries)
 2. get_token_info - Get token info from Gecko Terminal (limited coverage, use as fallback)
 
+
 DEX POOLS & PAIRS:
 3. get_trending_pools - Get trending trading pools across all networks (Gecko Terminal)
 4. get_network_trending_pools - Get trending trading pools for a specific network (Gecko Terminal)
 5. search_dex_pairs - Search for DEX pairs across multiple chains (DexScreener)
+
 6. get_dex_pair_info - Get specific DEX pair information by chain and address (DexScreener)
+7. get_token_info_address - Fallback for token info by address (DexScreener)
 
 WALLET ANALYSIS:
-7. get_wallet_analysis - Comprehensive wallet transaction analysis (Cielo Finance)
+8. get_wallet_analysis - Comprehensive wallet transaction analysis (Cielo Finance)
 
 TOOL PRIORITY & USAGE:
 - For TOKEN INFORMATION queries → ALWAYS use get_coingecko_token_info FIRST (broadest coverage)
@@ -43,6 +46,7 @@ TOOL PRIORITY & USAGE:
 - For DEX PAIR SEARCH queries → use search_dex_pairs (great for finding specific pairs)
 - For SPECIFIC PAIR INFO → use get_dex_pair_info (when you have chain + address)
 - For WALLET ANALYSIS → use get_wallet_analysis (comprehensive transaction history and insights)
+- For TOKEN INFO by ADDRESS → use get_token_info_address as a fallback
 
 When users ask about:
 - Specific tokens (BTC, ETH, DOGE, etc.) → use get_coingecko_token_info
@@ -51,6 +55,7 @@ When users ask about:
 - "search for PEPE pairs" or "find SHIB pairs" → use search_dex_pairs
 - Specific pair with address → use get_dex_pair_info
 - "analyze wallet", "wallet analysis", or wallet addresses → use get_wallet_analysis
+- For token info by address → use get_token_info_address
 
 WALLET ANALYSIS FEATURES:
 - Transaction history and volume analysis
@@ -89,6 +94,7 @@ IMPORTANT: Always return valid JSON from tools. If there's an error, return a pr
         search_dex_pairs: searchDexPairsTool,
         get_dex_pair_info: getDexPairInfoTool,
         get_wallet_analysis: getWalletAnalysisTool,
+        get_token_info_address: getTokenPairsTool, // Fallback for address-based queries
       },
       onFinish: (result) => {
         console.log("Stream finished successfully:", {

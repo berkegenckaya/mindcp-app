@@ -185,15 +185,15 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
             return (
               <div
                 key={toolIndex}
-                className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700"
+                className="rounded-2xl p-3 sm:p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700 w-full"
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <AlertCircle className="h-4 w-4" />
-                  <span className="font-medium">Token Information Error</span>
+                  <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                  <span className="font-medium text-sm">Token Information Error</span>
                 </div>
-                <p className="text-sm mb-2">{errorInfo.error}</p>
+                <p className="text-xs sm:text-sm mb-2">{errorInfo.error}</p>
                 {errorInfo.suggestion && (
-                  <p className="text-sm text-red-600 bg-red-50/50 p-2 rounded-lg">
+                  <p className="text-xs sm:text-sm text-red-600 bg-red-50/50 p-2 rounded-lg">
                     💡 <strong>Suggestion:</strong> {errorInfo.suggestion}
                   </p>
                 )}
@@ -215,14 +215,14 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
           return (
             <div
               key={toolIndex}
-              className="rounded-2xl p-4 bg-orange-100/20 backdrop-blur-md border border-orange-300/50 text-orange-700"
+              className="rounded-2xl p-3 sm:p-4 bg-orange-100/20 backdrop-blur-md border border-orange-300/50 text-orange-700 w-full"
             >
               <div className="flex items-center gap-2 mb-2">
-                <AlertCircle className="h-4 w-4" />
-                <span className="font-medium">No Token Data Available</span>
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span className="font-medium text-sm">No Token Data Available</span>
               </div>
-              <p className="text-sm mb-3">Unable to retrieve token information. This could be due to:</p>
-              <ul className="text-sm space-y-1 ml-4 list-disc">
+              <p className="text-xs sm:text-sm mb-3">Unable to retrieve token information. This could be due to:</p>
+              <ul className="text-xs sm:text-sm space-y-1 ml-4 list-disc">
                 <li>Token not found in database</li>
                 <li>Invalid token symbol or name</li>
                 <li>API rate limiting or connectivity issues</li>
@@ -240,13 +240,13 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
           return (
             <div
               key={toolIndex}
-              className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700"
+              className="rounded-2xl p-3 sm:p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700 w-full"
             >
               <div className="flex items-center gap-2 mb-2">
-                <AlertCircle className="h-4 w-4" />
-                <span className="font-medium">Token Data Parse Error</span>
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span className="font-medium text-sm">Token Data Parse Error</span>
               </div>
-              <p className="text-sm mb-2">Failed to parse token information response</p>
+              <p className="text-xs sm:text-sm mb-2">Failed to parse token information response</p>
               <details>
                 <summary className="text-xs cursor-pointer hover:text-red-800">Raw Response</summary>
                 <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">
@@ -286,15 +286,15 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
             return (
               <div
                 key={toolIndex}
-                className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700"
+                className="rounded-2xl p-3 sm:p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700 w-full"
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <AlertCircle className="h-4 w-4" />
-                  <span className="font-medium">Trending Pools Error</span>
+                  <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                  <span className="font-medium text-sm">Trending Pools Error</span>
                 </div>
-                <p className="text-sm mb-2">{errorInfo.error}</p>
+                <p className="text-xs sm:text-sm mb-2">{errorInfo.error}</p>
                 {errorInfo.suggestion && (
-                  <p className="text-sm text-red-600 bg-red-50/50 p-2 rounded-lg">
+                  <p className="text-xs sm:text-sm text-red-600 bg-red-50/50 p-2 rounded-lg">
                     💡 <strong>Suggestion:</strong> {errorInfo.suggestion}
                   </p>
                 )}
@@ -323,14 +323,14 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
           return (
             <div
               key={toolIndex}
-              className="rounded-2xl p-4 bg-orange-100/20 backdrop-blur-md border border-orange-300/50 text-orange-700"
+              className="rounded-2xl p-3 sm:p-4 bg-orange-100/20 backdrop-blur-md border border-orange-300/50 text-orange-700 w-full"
             >
               <div className="flex items-center gap-2 mb-2">
-                <AlertCircle className="h-4 w-4" />
-                <span className="font-medium">No Trending Pools Available</span>
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span className="font-medium text-sm">No Trending Pools Available</span>
               </div>
-              <p className="text-sm mb-3">Unable to retrieve trending pools data. This could be due to:</p>
-              <ul className="text-sm space-y-1 ml-4 list-disc">
+              <p className="text-xs sm:text-sm mb-3">Unable to retrieve trending pools data. This could be due to:</p>
+              <ul className="text-xs sm:text-sm space-y-1 ml-4 list-disc">
                 <li>No active pools on the specified network</li>
                 <li>API rate limiting or connectivity issues</li>
                 <li>Network temporarily unavailable</li>
@@ -348,13 +348,13 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
           return (
             <div
               key={toolIndex}
-              className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700"
+              className="rounded-2xl p-3 sm:p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700 w-full"
             >
               <div className="flex items-center gap-2 mb-2">
-                <AlertCircle className="h-4 w-4" />
-                <span className="font-medium">Pools Data Parse Error</span>
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span className="font-medium text-sm">Pools Data Parse Error</span>
               </div>
-              <p className="text-sm mb-2">Failed to parse trending pools response</p>
+              <p className="text-xs sm:text-sm mb-2">Failed to parse trending pools response</p>
               <details>
                 <summary className="text-xs cursor-pointer hover:text-red-800">Raw Response</summary>
                 <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">
@@ -394,15 +394,15 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
             return (
               <div
                 key={toolIndex}
-                className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700"
+                className="rounded-2xl p-3 sm:p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700 w-full"
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <AlertCircle className="h-4 w-4" />
-                  <span className="font-medium">DEX Pairs Error</span>
+                  <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                  <span className="font-medium text-sm">DEX Pairs Error</span>
                 </div>
-                <p className="text-sm mb-2">{errorInfo.error}</p>
+                <p className="text-xs sm:text-sm mb-2">{errorInfo.error}</p>
                 {errorInfo.suggestion && (
-                  <p className="text-sm text-red-600 bg-red-50/50 p-2 rounded-lg">
+                  <p className="text-xs sm:text-sm text-red-600 bg-red-50/50 p-2 rounded-lg">
                     💡 <strong>Suggestion:</strong> {errorInfo.suggestion}
                   </p>
                 )}
@@ -424,14 +424,14 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
           return (
             <div
               key={toolIndex}
-              className="rounded-2xl p-4 bg-orange-100/20 backdrop-blur-md border border-orange-300/50 text-orange-700"
+              className="rounded-2xl p-3 sm:p-4 bg-orange-100/20 backdrop-blur-md border border-orange-300/50 text-orange-700 w-full"
             >
               <div className="flex items-center gap-2 mb-2">
-                <AlertCircle className="h-4 w-4" />
-                <span className="font-medium">No DEX Pairs Found</span>
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span className="font-medium text-sm">No DEX Pairs Found</span>
               </div>
-              <p className="text-sm mb-3">Unable to find DEX pairs. This could be due to:</p>
-              <ul className="text-sm space-y-1 ml-4 list-disc">
+              <p className="text-xs sm:text-sm mb-3">Unable to find DEX pairs. This could be due to:</p>
+              <ul className="text-xs sm:text-sm space-y-1 ml-4 list-disc">
                 <li>No pairs found for the search query</li>
                 <li>Invalid token symbol or pair address</li>
                 <li>Unsupported blockchain network</li>
@@ -449,13 +449,13 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
           return (
             <div
               key={toolIndex}
-              className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700"
+              className="rounded-2xl p-3 sm:p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700 w-full"
             >
               <div className="flex items-center gap-2 mb-2">
-                <AlertCircle className="h-4 w-4" />
-                <span className="font-medium">DEX Pairs Parse Error</span>
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span className="font-medium text-sm">DEX Pairs Parse Error</span>
               </div>
-              <p className="text-sm mb-2">Failed to parse DEX pairs response</p>
+              <p className="text-xs sm:text-sm mb-2">Failed to parse DEX pairs response</p>
               <details>
                 <summary className="text-xs cursor-pointer hover:text-red-800">Raw Response</summary>
                 <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">
@@ -494,15 +494,15 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
             return (
               <div
                 key={toolIndex}
-                className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700"
+                className="rounded-2xl p-3 sm:p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700 w-full"
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <AlertCircle className="h-4 w-4" />
-                  <span className="font-medium">Wallet Analysis Error</span>
+                  <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                  <span className="font-medium text-sm">Wallet Analysis Error</span>
                 </div>
-                <p className="text-sm mb-2">{errorInfo.error}</p>
+                <p className="text-xs sm:text-sm mb-2">{errorInfo.error}</p>
                 {errorInfo.suggestion && (
-                  <p className="text-sm text-red-600 bg-red-50/50 p-2 rounded-lg">
+                  <p className="text-xs sm:text-sm text-red-600 bg-red-50/50 p-2 rounded-lg">
                     💡 <strong>Suggestion:</strong> {errorInfo.suggestion}
                   </p>
                 )}
@@ -525,14 +525,14 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
           return (
             <div
               key={toolIndex}
-              className="rounded-2xl p-4 bg-orange-100/20 backdrop-blur-md border border-orange-300/50 text-orange-700"
+              className="rounded-2xl p-3 sm:p-4 bg-orange-100/20 backdrop-blur-md border border-orange-300/50 text-orange-700 w-full"
             >
               <div className="flex items-center gap-2 mb-2">
-                <AlertCircle className="h-4 w-4" />
-                <span className="font-medium">No Wallet Data Available</span>
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span className="font-medium text-sm">No Wallet Data Available</span>
               </div>
-              <p className="text-sm mb-3">Unable to retrieve wallet analysis data. This could be due to:</p>
-              <ul className="text-sm space-y-1 ml-4 list-disc">
+              <p className="text-xs sm:text-sm mb-3">Unable to retrieve wallet analysis data. This could be due to:</p>
+              <ul className="text-xs sm:text-sm space-y-1 ml-4 list-disc">
                 <li>Invalid wallet address format</li>
                 <li>Wallet has no recent transactions</li>
                 <li>API rate limiting or connectivity issues</li>
@@ -550,13 +550,13 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
           return (
             <div
               key={toolIndex}
-              className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700"
+              className="rounded-2xl p-3 sm:p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700 w-full"
             >
               <div className="flex items-center gap-2 mb-2">
-                <AlertCircle className="h-4 w-4" />
-                <span className="font-medium">Parse Error</span>
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span className="font-medium text-sm">Parse Error</span>
               </div>
-              <p className="text-sm mb-2">Failed to parse wallet analysis response</p>
+              <p className="text-xs sm:text-sm mb-2">Failed to parse wallet analysis response</p>
               <details>
                 <summary className="text-xs cursor-pointer hover:text-red-800">Raw Response</summary>
                 <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">
@@ -574,29 +574,29 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
   })
 
   return (
-    <div className={cn("flex items-start gap-3 w-full", isUser ? "justify-end" : "justify-start")}>
+    <div className={cn("flex items-start gap-2 sm:gap-3 w-full", isUser ? "justify-end" : "justify-start")}>
       {!isUser && (
-        <div className="relative h-8 w-8 flex-shrink-0">
+        <div className="relative h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0 mt-1">
           <div className="absolute inset-0 scale-95 rounded-lg bg-gradient-to-br from-[#c6a9ff] to-[#ffcf9f] blur-sm opacity-90" />
           <div className="relative z-10 flex h-full w-full items-center justify-center rounded-lg bg-gradient-to-br from-[#c6a9ff] to-[#ffcf9f] shadow-inner">
-            <Bot className="h-4 w-4 text-white" />
+            <Bot className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
           </div>
         </div>
       )}
 
-      <div className="flex flex-col justify-center gap-3 w-full max-w-[85%] sm:max-w-[75%] lg:max-w-[65%]">
+      <div className="flex flex-col justify-center gap-2 sm:gap-3 ">
         {/* Tool Components */}
         {toolComponents?.some((component) => component !== null) && (
-          <div className="flex flex-col gap-3 w-full">{toolComponents}</div>
+          <div className="flex flex-col gap-2 sm:gap-3 w-full min-w-0">{toolComponents}</div>
         )}
 
         {/* Message Content */}
         {message.content && (
           <div
             className={cn(
-              "rounded-2xl px-4 py-4 backdrop-blur-md shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)] w-full",
+              "rounded-2xl px-3 py-3 sm:px-4 sm:py-4 backdrop-blur-md shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)] w-full min-w-0",
               isUser
-                ? "bg-gradient-to-br from-purple-500/80 to-blue-500/80 text-white border border-white/30"
+                ? "bg-gradient-to-br from-purple-500/80 to-blue-500/80  break-words text-white border border-white/30"
                 : "bg-white/18 border border-white/35",
             )}
           >
@@ -607,13 +607,13 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                   <span className="animate-bounce delay-100">.</span>
                   <span className="animate-bounce delay-200">.</span>
                 </div>
-                <span className="text-sm">Processing request</span>
+                <span className="text-xs sm:text-sm">Processing request</span>
               </div>
             ) : (
               <ReactMarkdown
                 components={{
                   p({ children }) {
-                    return <p className="mb-2 last:mb-0 leading-relaxed text-sm">{children}</p>
+                    return <p className="mb-2 last:mb-0 leading-relaxed text-xs sm:text-sm">{children}</p>
                   },
                   ul({ children }) {
                     return <ul className="list-disc ml-4 mb-2 space-y-1">{children}</ul>
@@ -624,17 +624,17 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                   li({ children }) {
                     // Hide list items if we have tool components to avoid duplication
                     return toolComponents?.some((component) => component !== null) ? null : (
-                      <li className="leading-relaxed text-sm">{children}</li>
+                      <li className="leading-relaxed text-xs sm:text-sm">{children}</li>
                     )
                   },
                   h1({ children }) {
-                    return <h1 className="text-lg font-bold mb-2 mt-4 first:mt-0">{children}</h1>
+                    return <h1 className="text-base sm:text-lg font-bold mb-2 mt-4 first:mt-0">{children}</h1>
                   },
                   h2({ children }) {
-                    return <h2 className="text-base font-bold mb-2 mt-4 first:mt-0">{children}</h2>
+                    return <h2 className="text-sm sm:text-base font-bold mb-2 mt-4 first:mt-0">{children}</h2>
                   },
                   h3({ children }) {
-                    return <h3 className="text-sm font-bold mb-2 mt-3 first:mt-0">{children}</h3>
+                    return <h3 className="text-xs sm:text-sm font-bold mb-2 mt-3 first:mt-0">{children}</h3>
                   },
                   blockquote({ children }) {
                     return <blockquote className="border-l-2 border-purple-400 pl-4 italic my-2">{children}</blockquote>
@@ -643,7 +643,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                     return (
                       <a
                         href={href}
-                        className="text-purple-400 hover:text-purple-300 hover:underline"
+                        className="text-purple-400 hover:text-purple-300 hover:underline break-words"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -659,10 +659,10 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                     )
                   },
                   th({ children }) {
-                    return <th className="px-4 py-2 text-sm font-medium bg-white/10">{children}</th>
+                    return <th className="px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium bg-white/10">{children}</th>
                   },
                   td({ children }) {
-                    return <td className="px-4 py-2 text-sm border-t border-white/10">{children}</td>
+                    return <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm border-t border-white/10">{children}</td>
                   },
                 }}
               >
@@ -674,10 +674,10 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
       </div>
 
       {isUser && (
-        <div className="relative h-8 w-8 flex-shrink-0">
+        <div className="relative h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0 mt-1">
           <div className="absolute inset-0 scale-95 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 blur-sm opacity-90" />
           <div className="relative z-10 flex h-full w-full items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 shadow-inner">
-            <User className="h-4 w-4 text-white" />
+            <User className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
           </div>
         </div>
       )}

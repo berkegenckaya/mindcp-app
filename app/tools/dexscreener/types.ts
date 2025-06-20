@@ -60,12 +60,11 @@ export interface DexScreenerPair {
     header?: string
     openGraph?: string
     websites?: Array<{
-      label: string
       url: string
     }>
     socials?: Array<{
-      type: string
-      url: string
+      platform: string
+      handle: string
     }>
   }
   boosts?: {
@@ -84,8 +83,15 @@ export interface DexScreenerSearchResponse {
   pairs: DexScreenerPair[]
 }
 
+// New interface for token pairs endpoint
+export interface DexScreenerTokenResponse {
+  schemaVersion: string
+  pairs: DexScreenerPair[]
+}
+
+
 export interface FormattedDexPair {
-  id: string
+id: string
   name: string
   chainId: string
   dexId: string
@@ -106,8 +112,8 @@ export interface FormattedDexPair {
   price_change_24h: string
   price_trend: "up" | "down" | "stable"
   volume_24h: string
-  volume_1h: string
   volume_6h: string
+  volume_1h: string
   volume_5m: string
   liquidity: string
   liquidityBase: string
@@ -129,14 +135,13 @@ export interface FormattedDexPair {
   pairCreatedAt?: string
   url: string
   image_url?: string
-  header_url?: string
   websites?: Array<{
-    label: string
     url: string
   }>
   socials?: Array<{
-    type: string
-    url: string
+    platform: string
+    handle: string
   }>
   boosts?: number
 }
+

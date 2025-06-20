@@ -1,7 +1,8 @@
 "use client"
 
-import { TrendingUp, TrendingDown, Minus } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, ExternalLink } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 
 interface TokenInfo {
   name: string
@@ -12,7 +13,11 @@ interface TokenInfo {
   market_cap: string
   volume_24h: string
   blockchain: string
-  contract_address: string
+  image_url?: string
+  description?: string
+  circulating_supply?: string
+  total_supply?: string
+  max_supply?: string
 }
 
 interface TokenInfoCompactProps {
@@ -42,50 +47,110 @@ export function TokenInfoCompact({ tokenInfo }: TokenInfoCompactProps) {
     }
   }
 
-  return (
-    <div className="inline-block rounded-xl bg-white/20 backdrop-blur-sm border border-white/30 p-4 my-2 max-w-md">
-      <div className="flex items-center gap-3 mb-3">
-        <div className="relative h-8 w-8">
-          <div className="absolute inset-0 scale-95 rounded-lg bg-gradient-to-br from-[#c6a9ff] to-[#ffcf9f] blur-sm opacity-90" />
-          <div className="relative z-10 flex h-full w-full items-center justify-center rounded-lg bg-gradient-to-br from-[#c6a9ff] to-[#ffcf9f] shadow-inner">
-            <span className="text-white font-bold text-xs">{tokenInfo.symbol.slice(0, 2)}</span>
-          </div>
-        </div>
-        <div>
-          <div className="font-semibold text-gray-900">{tokenInfo.name}</div>
-          <div className="flex items-center gap-2">
-            <Badge className="text-xs bg-white/30 backdrop-blur-sm border-white/40">{tokenInfo.symbol}</Badge>
-            <Badge variant="outline" className="text-xs bg-purple-50/30 text-purple-700 border-purple-300/50">
-              {tokenInfo.blockchain}
-            </Badge>
-          </div>
-        </div>
-      </div>
+  const openCoinGecko = () => {
+    const searchQuery = encodeURIComponent(tokenInfo.name.toLowerCase().replace(/\s+/g, "-"))
+    window.open(`https://www.coingecko.com/en/coins/${searchQuery}`, "_blank")
+  }
 
-      <div className="grid grid-cols-2 gap-3 text-sm">
-        <div>
-          <div className="text-xs text-gray-600 font-medium">Price</div>
-          <div className="font-semibold text-gray-900">{tokenInfo.price}</div>
+  return (
+    <div className="w-full">
+      <div className="rounded-xl bg-white/20 backdrop-blur-sm border border-white/30 p-3 sm:p-4 my-2">
+        <div className="flex items-center gap-2 sm:gap-3 mb-3">
+          <div className="relative h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0">
+            {tokenInfo.image_url ? (
+              <img
+                src={tokenInfo.image_url || "/placeholder.svg"}
+                alt={tokenInfo.name}
+                className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg object-cover"
+                onError={(e) => {
+                  // Fallback to gradient if image fails to load
+                  const target = e.target as HTMLImageElement
+                  target.style.display = "none"
+                  target.nextElementSibling?.classList.remove("hidden")
+                }}
+              />
+            ) : null}
+            <div
+              className={`${tokenInfo.image_url ? "hidden" : ""} absolute inset-0 scale-95 rounded-lg bg-gradient-to-br from-[#c6a9ff] to-[#ffcf9f] blur-sm opacity-90`}
+            />
+            <div
+              className={`${tokenInfo.image_url ? "hidden" : ""} relative z-10 flex h-full w-full items-center justify-center rounded-lg bg-gradient-to-br from-[#c6a9ff] to-[#ffcf9f] shadow-inner`}
+            >
+              <span className="text-white font-bold text-xs sm:text-sm">{tokenInfo.symbol.slice(0, 3)}</span>
+            </div>
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="font-semibold text-gray-900 truncate text-sm sm:text-base">{tokenInfo.name}</div>
+            <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+              <Badge className="text-xs bg-white/30 backdrop-blur-sm border-white/40">{tokenInfo.symbol}</Badge>
+              <Badge variant="outline" className="text-xs bg-purple-50/30 text-purple-700 border-purple-300/50">
+                {tokenInfo.blockchain}
+              </Badge>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={openCoinGecko}
+            className="h-6 w-6 sm:h-8 sm:w-8 p-0 bg-white/10 hover:bg-white/20 flex-shrink-0"
+            title="View on CoinGecko"
+          >
+            <ExternalLink className="h-3 w-3" />
+          </Button>
         </div>
-        <div>
-          <div className="text-xs text-gray-600 font-medium">24h Change</div>
-          <div className={`flex items-center gap-1 font-semibold ${getTrendColor()}`}>
-            {getTrendIcon()}
-            {tokenInfo.price_change_24h}
+
+        {/* Description */}
+        {tokenInfo.description && (
+          <div className="mb-3 p-2 bg-white/10 rounded-lg">
+            <p className="text-xs text-gray-700 line-clamp-2">{tokenInfo.description}</p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm">
+          <div className="bg-white/10 rounded-lg p-2 sm:p-3">
+            <div className="text-xs text-gray-600 font-medium mb-1">Price</div>
+            <div className="font-semibold text-gray-900 text-sm sm:text-base">{tokenInfo.price}</div>
+          </div>
+          <div className="bg-white/10 rounded-lg p-2 sm:p-3">
+            <div className="text-xs text-gray-600 font-medium mb-1">24h Change</div>
+            <div className={`flex items-center gap-1 font-semibold text-sm sm:text-base ${getTrendColor()}`}>
+              {getTrendIcon()}
+              {tokenInfo.price_change_24h}
+            </div>
+          </div>
+          <div className="bg-white/10 rounded-lg p-2 sm:p-3">
+            <div className="text-xs text-gray-600 font-medium mb-1">Market Cap</div>
+            <div className="font-semibold text-gray-900 text-xs sm:text-sm">{tokenInfo.market_cap}</div>
+          </div>
+          <div className="bg-white/10 rounded-lg p-2 sm:p-3">
+            <div className="text-xs text-gray-600 font-medium mb-1">24h Volume</div>
+            <div className="font-semibold text-gray-900 text-xs sm:text-sm">{tokenInfo.volume_24h}</div>
           </div>
         </div>
-        <div>
-          <div className="text-xs text-gray-600 font-medium">Market Cap</div>
-          <div className="font-semibold text-gray-900">{tokenInfo.market_cap}</div>
-        </div>
-        <div>
-          <div className="text-xs text-gray-600 font-medium">24h Volume</div>
-          <div className="font-semibold text-gray-900">{tokenInfo.volume_24h}</div>
-        </div>
-         <div>
-          <div className="text-xs text-gray-600 font-medium">24h Volume</div>
-          <div className="font-semibold text-gray-900">{tokenInfo.contract_address}</div>
-        </div>
+
+        {/* Additional Supply Info */}
+        {(tokenInfo.circulating_supply || tokenInfo.total_supply || tokenInfo.max_supply) && (
+          <div className="grid grid-cols-3 gap-1 sm:gap-2 mt-2 sm:mt-3 text-xs">
+            {tokenInfo.circulating_supply && (
+              <div className="bg-white/10 rounded-lg p-2">
+                <div className="text-gray-600 font-medium mb-1">Circulating</div>
+                <div className="font-semibold text-gray-900 text-xs">{tokenInfo.circulating_supply}</div>
+              </div>
+            )}
+            {tokenInfo.total_supply && (
+              <div className="bg-white/10 rounded-lg p-2">
+                <div className="text-gray-600 font-medium mb-1">Total</div>
+                <div className="font-semibold text-gray-900 text-xs">{tokenInfo.total_supply}</div>
+              </div>
+            )}
+            {tokenInfo.max_supply && (
+              <div className="bg-white/10 rounded-lg p-2">
+                <div className="text-gray-600 font-medium mb-1">Max</div>
+                <div className="font-semibold text-gray-900 text-xs">{tokenInfo.max_supply}</div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )
