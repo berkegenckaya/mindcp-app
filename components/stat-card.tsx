@@ -1,47 +1,33 @@
-import { ArrowRight } from "lucide-react";
-import { ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import { ArrowRight } from "lucide-react"
+import type { ReactNode } from "react"
+import { cn } from "@/lib/utils"
 
 type FancyCardProps = {
-  title: string;
-  description: string;
-  icon?: ReactNode;
-  href?: string;
-};
+  title: string
+  description: string
+  icon?: ReactNode
+  href?: string
+}
 
 export function FancyCard({ title, description, icon, href }: FancyCardProps) {
-  return (
-    <div
-      className={cn(
-        `
-        relative group p-5
-        rounded-2xl
-        border border-white/35
-        bg-white/18 backdrop-blur-md
-        shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)]
-        transition-all duration-300
-        hover:scale-[1.02] hover:bg-white/26
-        hover:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.55),0_8px_28px_rgba(0,0,0,0.2)]
-      `
-      )}
-    >
+  const CardContent = () => (
+    <>
       {/* link badge */}
       {href && (
-        <a
-          href={href}
+        <div
           className="
-            absolute top-4 right-4
-            inline-flex items-center justify-center
-            w-8 h-8 rounded-xl
-            border border-white/40 bg-white/25 backdrop-blur-md
-            text-gray-700
-            shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4)]
-            transition-all
-            hover:bg-white/35
-          "
+          absolute top-4 right-4
+          inline-flex items-center justify-center
+          w-8 h-8 rounded-xl
+          border border-white/40 bg-white/25 backdrop-blur-md
+          text-gray-700
+          shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4)]
+          transition-all
+          group-hover:bg-white/35
+        "
         >
           <ArrowRight className="w-4 h-4 -rotate-45 transition-transform duration-300 group-hover:rotate-0" />
-        </a>
+        </div>
       )}
 
       {/* icon badge */}
@@ -55,6 +41,34 @@ export function FancyCard({ title, description, icon, href }: FancyCardProps) {
       {/* text */}
       <h3 className="mb-1 text-lg font-semibold text-gray-900">{title}</h3>
       <p className="text-sm text-gray-600">{description}</p>
+    </>
+  )
+
+  const cardClasses = cn(
+    `
+    relative group p-5
+    rounded-2xl
+    border border-white/35
+    bg-white/18 backdrop-blur-md
+    shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)]
+    transition-all duration-300
+    hover:scale-[1.02] hover:bg-white/26
+    hover:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.55),0_8px_28px_rgba(0,0,0,0.2)]
+    `,
+    href && "cursor-pointer",
+  )
+
+  if (href) {
+    return (
+      <a href={href} className={cardClasses}>
+        <CardContent />
+      </a>
+    )
+  }
+
+  return (
+    <div className={cardClasses}>
+      <CardContent />
     </div>
-  );
+  )
 }
