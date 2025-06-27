@@ -394,11 +394,7 @@ export function WalletAnalysisCard({ walletData }: WalletAnalysisCardProps) {
           </Tabs>
 
           {/* Credits Used */}
-          <div className="mt-3 sm:mt-4 text-center">
-            <span className="text-xs text-gray-500">
-              Analysis powered by Cielo Finance • {walletData.credits_used} credits used
-            </span>
-          </div>
+         
         </CardContent>
       </Card>
     </div>
