@@ -70,14 +70,14 @@ export function BasicAgentCard({ agent }: BasicAgentCardProps) {
   return (
     <Card
       className="
-        relative group cursor-pointer rounded-2xl p-2
-        border border-white/35
-        bg-white/18 backdrop-blur-md
-        shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)]
-        transition-all duration-300
-        hover:scale-[1.02] hover:bg-white/26
-        hover:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.55),0_8px_28px_rgba(0,0,0,0.2)]
-      "
+    relative group cursor-pointer rounded-2xl p-2
+    border border-gray-700/50
+    bg-black/60 backdrop-blur-md
+    shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1),0_6px_22px_rgba(0,0,0,0.3)]
+    transition-all duration-300
+    hover:scale-[1.02] hover:bg-black/80
+    hover:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.15),0_8px_28px_rgba(0,0,0,0.4)]
+  "
       onClick={handleClick}
     >
       <CardHeader className="pb-3">
@@ -92,17 +92,15 @@ export function BasicAgentCard({ agent }: BasicAgentCardProps) {
             </div>
 
             <div>
-              <CardTitle className="text-lg bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
-                {agent.name}
-              </CardTitle>
+              <CardTitle className="text-lg text-white">{agent.name}</CardTitle>
               <div className="mt-1 flex items-center gap-2">
                 <Badge
                   variant={agent.status === "active" ? "default" : agent.status === "idle" ? "secondary" : "outline"}
-                  className="text-xs bg-black/80 backdrop-blur-sm border-white/30"
+                  className="text-xs bg-white/20 backdrop-blur-sm border-white/30"
                 >
                   {agent.status}
                 </Badge>
-                <span className="text-xs text-gray-600">{getAgentTypeLabel(agent.type)}</span>
+                <span className="text-xs text-gray-300">{getAgentTypeLabel(agent.type)}</span>
               </div>
             </div>
           </div>
@@ -120,7 +118,7 @@ export function BasicAgentCard({ agent }: BasicAgentCardProps) {
       </CardHeader>
 
       <CardContent className="pt-0">
-        <CardDescription className="text-sm text-gray-700 mb-4 line-clamp-2">{agent.description}</CardDescription>
+        <CardDescription className="text-sm text-gray-300 mb-4 line-clamp-2">{agent.description}</CardDescription>
 
         {/* Tools with glassmorphic badges */}
         {agent.tools.length > 0 && (
@@ -130,13 +128,16 @@ export function BasicAgentCard({ agent }: BasicAgentCardProps) {
                 <Badge
                   key={tool}
                   variant="outline"
-                  className="text-xs bg-purple-50/20 text-purple-700 border-purple-300/50 backdrop-blur-sm"
+                  className="text-xs bg-purple-500/20 text-purple-300 border-purple-400/50 backdrop-blur-sm"
                 >
                   {tool}
                 </Badge>
               ))}
               {agent.tools.length > 3 && (
-                <Badge variant="outline" className="text-xs bg-white/20 text-gray-600 border-white/30 backdrop-blur-sm">
+                <Badge
+                  variant="outline"
+                  className="text-xs bg-gray-800/60 text-gray-300 border-gray-600/50 backdrop-blur-sm"
+                >
                   +{agent.tools.length - 3} more
                 </Badge>
               )}
@@ -151,13 +152,13 @@ export function BasicAgentCard({ agent }: BasicAgentCardProps) {
               {agent.capabilities.slice(0, 2).map((cap) => (
                 <Badge
                   key={cap}
-                  className="text-xs bg-gradient-to-r from-blue-500/20 to-blue-500/20  backdrop-blur-sm"
+                  className="text-xs bg-gradient-to-r from-blue-500/30 to-blue-600/30 text-blue-200 backdrop-blur-sm border border-blue-400/30"
                 >
                   {cap}
                 </Badge>
               ))}
               {agent.capabilities.length > 2 && (
-                <Badge className="text-xs bg-white/20 text-white border-white/30 backdrop-blur-sm">
+                <Badge className="text-xs bg-gray-800/60 text-gray-300 border-gray-600/50 backdrop-blur-sm">
                   +{agent.capabilities.length - 2} more
                 </Badge>
               )}
@@ -166,7 +167,7 @@ export function BasicAgentCard({ agent }: BasicAgentCardProps) {
         )}
 
         {/* Hover overlay with gradient */}
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
       </CardContent>
     </Card>
   )

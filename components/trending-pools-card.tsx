@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { TrendingUp, TrendingDown, Minus, ExternalLink, Copy, Check, Droplets, MousePointer } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, ExternalLink, Copy, Check, Droplets, MousePointer } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -109,7 +109,7 @@ export function TrendingPoolsCard({ pools, onTokenClick, onPairClick }: Trending
 
   return (
     <div className="w-full">
-      <Card className="relative group rounded-2xl border border-white/35 bg-white/18 backdrop-blur-md shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)] transition-all duration-300 hover:bg-white/26">
+      <Card className="relative group rounded-2xl border border-gray-700/50 bg-gray-800/40 backdrop-blur-md shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)] transition-all duration-300 hover:bg-gray-800/60">
         <CardHeader className="pb-3 sm:pb-4">
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Pools Icon */}
@@ -124,7 +124,7 @@ export function TrendingPoolsCard({ pools, onTokenClick, onPairClick }: Trending
               <CardTitle className="text-base sm:text-lg bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
                 Trending Pools
               </CardTitle>
-              <p className="text-xs sm:text-sm text-gray-600">
+              <p className="text-xs sm:text-sm text-gray-300">
                 Top {pools.length} trending trading pools • Click pairs for detailed analysis
               </p>
             </div>
@@ -135,7 +135,7 @@ export function TrendingPoolsCard({ pools, onTokenClick, onPairClick }: Trending
           {pools.slice(0, 5).map((pool, index) => (
             <div
               key={pool.id}
-              className="rounded-xl bg-white/20 backdrop-blur-sm border border-white/30 p-3 sm:p-4 hover:bg-white/30 transition-all duration-200 cursor-pointer hover:scale-[1.02] hover:shadow-lg"
+              className="rounded-xl bg-gray-700/30 backdrop-blur-sm border border-gray-600/30 p-3 sm:p-4 hover:bg-gray-700/50 transition-all duration-200 cursor-pointer hover:scale-[1.02] hover:shadow-lg"
               onClick={() => handlePairClick(pool)}
             >
               {/* Pool Header */}
@@ -145,7 +145,7 @@ export function TrendingPoolsCard({ pools, onTokenClick, onPairClick }: Trending
                     <span className="text-xs sm:text-sm font-bold text-purple-600">#{index + 1}</span>
                     <Badge
                       variant="outline"
-                      className="text-xs bg-purple-50/20 text-purple-700 border-purple-300/50 px-1 sm:px-2 py-0.5"
+                      className="text-xs bg-purple-900/30 text-purple-300 border-purple-600/50 px-1 sm:px-2 py-0.5"
                     >
                       {pool.network}
                     </Badge>
@@ -155,15 +155,15 @@ export function TrendingPoolsCard({ pools, onTokenClick, onPairClick }: Trending
                     <div className="flex items-center gap-1 flex-wrap">
                       <button
                         onClick={(e) => handleTokenClick(pool.base_token.symbol, pool.network, e)}
-                        className="font-semibold text-gray-900 text-xs sm:text-sm hover:text-purple-600 hover:underline transition-colors cursor-pointer"
+                        className="font-semibold text-white text-xs sm:text-sm hover:text-purple-600 hover:underline transition-colors cursor-pointer"
                         title={`Get details for ${pool.base_token.symbol}`}
                       >
                         {pool.base_token.symbol}
                       </button>
-                      <span className="text-gray-500 text-xs sm:text-sm">/</span>
+                      <span className="text-gray-400 text-xs sm:text-sm">/</span>
                       <button
                         onClick={(e) => handleTokenClick(pool.quote_token.symbol, pool.network, e)}
-                        className="font-semibold text-gray-900 text-xs sm:text-sm hover:text-purple-600 hover:underline transition-colors cursor-pointer"
+                        className="font-semibold text-white text-xs sm:text-sm hover:text-purple-600 hover:underline transition-colors cursor-pointer"
                         title={`Get details for ${pool.quote_token.symbol}`}
                       >
                         {pool.quote_token.symbol}
@@ -177,7 +177,7 @@ export function TrendingPoolsCard({ pools, onTokenClick, onPairClick }: Trending
                 </div>
 
                 <div className="text-right flex-shrink-0">
-                  <div className="font-semibold text-gray-900 text-xs sm:text-sm">{pool.price}</div>
+                  <div className="font-semibold text-white text-xs sm:text-sm">{pool.price}</div>
                   <div className={`flex items-center gap-1 justify-end text-xs ${getTrendColor(pool.price_trend)}`}>
                     {getTrendIcon(pool.price_trend)}
                     <span>{pool.price_change_24h}</span>
@@ -186,7 +186,7 @@ export function TrendingPoolsCard({ pools, onTokenClick, onPairClick }: Trending
               </div>
 
               {/* Token Details Row */}
-              <div className="flex items-center gap-1 sm:gap-2 mb-2 sm:mb-3 text-xs text-gray-600 overflow-hidden">
+              <div className="flex items-center gap-1 sm:gap-2 mb-2 sm:mb-3 text-xs text-gray-300 overflow-hidden">
                 <div className="flex items-center gap-1 min-w-0">
                   <span className="font-medium">Base:</span>
                   <button
@@ -212,25 +212,25 @@ export function TrendingPoolsCard({ pools, onTokenClick, onPairClick }: Trending
 
               {/* Pool Stats - Responsive Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 text-xs mb-2 sm:mb-3">
-                <div className="bg-white/10 rounded-lg p-2">
-                  <div className="text-gray-600 font-medium mb-1">Volume</div>
-                  <div className="font-semibold text-gray-900 text-xs">{pool.volume_24h}</div>
+                <div className="bg-gray-700/20 rounded-lg p-2">
+                  <div className="text-gray-300 font-medium mb-1">Volume</div>
+                  <div className="font-semibold text-white text-xs">{pool.volume_24h}</div>
                 </div>
-                <div className="bg-white/10 rounded-lg p-2">
-                  <div className="text-gray-600 font-medium mb-1">Liquidity</div>
-                  <div className="font-semibold text-gray-900 text-xs">{pool.liquidity}</div>
+                <div className="bg-gray-700/20 rounded-lg p-2">
+                  <div className="text-gray-300 font-medium mb-1">Liquidity</div>
+                  <div className="font-semibold text-white text-xs">{pool.liquidity}</div>
                 </div>
-                <div className="bg-white/10 rounded-lg p-2 col-span-2 sm:col-span-1">
-                  <div className="text-gray-600 font-medium mb-1">Market Cap</div>
-                  <div className="font-semibold text-gray-900 text-xs">{pool.market_cap}</div>
+                <div className="bg-gray-700/20 rounded-lg p-2 col-span-2 sm:col-span-1">
+                  <div className="text-gray-300 font-medium mb-1">Market Cap</div>
+                  <div className="font-semibold text-white text-xs">{pool.market_cap}</div>
                 </div>
               </div>
 
               {/* Pool Address - Compact */}
-              <div className="flex items-center justify-between rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 p-2">
+              <div className="flex items-center justify-between rounded-lg bg-gray-600/30 backdrop-blur-sm border border-white/20 p-2">
                 <div className="min-w-0 flex-1">
-                  <div className="text-xs text-gray-600 font-medium">Pool Address</div>
-                  <div className="text-xs font-mono text-gray-900 truncate">{formatAddress(pool.address)}</div>
+                  <div className="text-xs text-gray-300 font-medium">Pool Address</div>
+                  <div className="text-xs font-mono text-white truncate">{formatAddress(pool.address)}</div>
                 </div>
                 <div className="flex gap-1 flex-shrink-0 ml-2">
                   <Button
@@ -240,7 +240,7 @@ export function TrendingPoolsCard({ pools, onTokenClick, onPairClick }: Trending
                       e.stopPropagation()
                       copyToClipboard(pool.address, pool.id)
                     }}
-                    className="h-6 w-6 p-0 bg-white/10 hover:bg-white/20"
+                    className="h-6 w-6 p-0 bg-gray-700/30 hover:bg-gray-600/40"
                   >
                     {copied === pool.id ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
                   </Button>
@@ -252,7 +252,7 @@ export function TrendingPoolsCard({ pools, onTokenClick, onPairClick }: Trending
                       const explorerUrl = getPoolExplorerUrl(pool.network, pool.address)
                       if (explorerUrl) window.open(explorerUrl, "_blank")
                     }}
-                    className="h-6 w-6 p-0 bg-white/10 hover:bg-white/20"
+                    className="h-6 w-6 p-0 bg-gray-700/30 hover:bg-gray-600/40"
                   >
                     <ExternalLink className="h-3 w-3" />
                   </Button>
@@ -260,14 +260,14 @@ export function TrendingPoolsCard({ pools, onTokenClick, onPairClick }: Trending
               </div>
 
               {/* Hover Effect Overlay */}
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-purple-500/5  opacity-100 transition-opacity duration-300 pointer-events-none" />
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
             </div>
           ))}
 
           {/* Show More Indicator */}
           {pools.length > 5 && (
             <div className="text-center py-2">
-              <span className="text-xs text-gray-500">Showing top 5 of {pools.length} pools</span>
+              <span className="text-xs text-gray-400">Showing top 5 of {pools.length} pools</span>
             </div>
           )}
         </CardContent>

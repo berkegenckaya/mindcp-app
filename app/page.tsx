@@ -2,7 +2,7 @@ import { AgentDashboard } from "@/components/dashboard/agent-dashboard";
 
 export default function Page() {
   return (
-    <div className="relative min-h-screen bg-[#f5f5f599] overflow-hidden">
+    <div className="relative min-h-screen bg-black overflow-hidden">
       {/* Glowing background */}
       <div className="absolute inset-0 z-10">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-400/20 via-transparent to-transparent"></div>

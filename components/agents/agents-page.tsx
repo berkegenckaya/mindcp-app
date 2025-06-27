@@ -4,7 +4,6 @@ import * as React from "react"
 import { useRouter } from "next/navigation"
 import { BasicAgentsGrid } from "./basic-agents-grid"
 
-
 interface Agent {
   id: number
   name: string
@@ -23,15 +22,13 @@ export default function BasicAgentsPage() {
     {
       id: 1,
       name: "On-Chain Analyst",
-      description:
-        "Analyzes blockchain data and generates reports on token performance and trends",
+      description: "Analyzes blockchain data and generates reports on token performance and trends",
       type: "analytics",
       status: "active",
       tools: ["coingecko", "dexscrenner", "mindcp", "openai-gpt-4o-mini"],
       capabilities: ["on-chain", "data-analysis", "data-visualization"],
       createdAt: "2025-01-20",
     },
-   
   ])
 
   const handleAgentClick = (agentId: number) => {
@@ -40,12 +37,12 @@ export default function BasicAgentsPage() {
   }
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen  p-6">
       <div className="mx-auto max-w-7xl space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Choose Your AI Agent</h1>
-          <p className="mt-2 text-gray-600">Select an agent to start a conversation</p>
+          <h1 className="text-3xl font-bold text-white">Choose Your AI Agent</h1>
+          <p className="mt-2 text-gray-400">Select an agent to start a conversation</p>
         </div>
 
         {/* Agents Grid */}

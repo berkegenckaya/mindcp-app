@@ -74,20 +74,20 @@ export async function searchToken(query: string): Promise<TokenSearchResult | nu
 
     // Common token mappings
     const commonTokens: Record<string, TokenSearchResult> = {
-      ethereum: { network: "eth", token: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2" },
-      eth: { network: "eth", token: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2" },
-      bitcoin: { network: "btc", token: "btc" },
-      btc: { network: "btc", token: "btc" },
-      solana: { network: "solana", token: "sol" },
-      sol: { network: "solana", token: "sol" },
-      bnb: { network: "bsc", token: "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c" },
-      "binance-coin": { network: "bsc", token: "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c" },
-      polygon: { network: "polygon_pos", token: "0x0000000000000000000000000000000000001010" },
-      matic: { network: "polygon_pos", token: "0x0000000000000000000000000000000000001010" },
-      avalanche: { network: "avalanche", token: "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7" },
-      avax: { network: "avalanche", token: "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7" },
-      usdc: { network: "eth", token: "0xa0b86a33e6441b8c18d904c9c0b0b8b8b8b8b8b8" },
-      usdt: { network: "eth", token: "0xdac17f958d2ee523a2206206994597c13d831ec7" },
+      ethereum: { network: "eth", token: "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640" }, // ETH/USDC V3 Pool
+      eth: { network: "eth", token: "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640" }, // ETH/USDC V3 Pool
+      bitcoin: { network: "eth", token: "0xcbcdf9626bc03e24f779434178a73a0b4bad62ed" }, // WBTC/ETH V3 Pool
+      btc: { network: "eth", token: "0xcbcdf9626bc03e24f779434178a73a0b4bad62ed" }, // WBTC/ETH V3 Pool
+      solana: { network: "solana", token: "58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2" }, // SOL/USDC Pool
+      sol: { network: "solana", token: "58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2" }, // SOL/USDC Pool
+      bnb: { network: "bsc", token: "0x58f876857a02d6762e0101bb5c46a8c1ed44dc16" }, // BNB/BUSD Pool
+      "binance-coin": { network: "bsc", token: "0x58f876857a02d6762e0101bb5c46a8c1ed44dc16" }, // BNB/BUSD Pool
+      polygon: { network: "polygon_pos", token: "0x45dda9cb7c25131df268515131f647d726f50608" }, // MATIC/USDC Pool
+      matic: { network: "polygon_pos", token: "0x45dda9cb7c25131df268515131f647d726f50608" }, // MATIC/USDC Pool
+      avalanche: { network: "avalanche", token: "0xf4003f4efbe8691b60249e6afbd307abe7758adb" }, // AVAX/USDC Pool
+      avax: { network: "avalanche", token: "0xf4003f4efbe8691b60249e6afbd307abe7758adb" }, // AVAX/USDC Pool
+      usdc: { network: "eth", token: "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640" }, // ETH/USDC V3 Pool
+      usdt: { network: "eth", token: "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36" }, // ETH/USDT V3 Pool
     }
 
     const result = commonTokens[cleanQuery]

@@ -6,7 +6,7 @@ export function NeonButton({title}: React.HTMLAttributes<HTMLButtonElement>) {
   return (
    <Button className="
       relative inline-flex items-center justify-center cursor-pointer
-      px-6 py-2  tracking-wider leading-6 font-bold text-gray-900
+      px-6 py-2  tracking-wider leading-6 font-bold text-white
       rounded-full border border-white/40 mt-1
       bg-white/20 backdrop-blur-md
       shadow-[inset_0_0_0_1px_rgba(255,255,255,0.45),0_4px_24px_rgba(0,0,0,0.15)]

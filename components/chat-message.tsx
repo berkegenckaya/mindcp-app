@@ -31,6 +31,7 @@ interface TokenData {
   blockchain: string
   image_url?: string
   description?: string
+  
 }
 
 interface PoolData {
@@ -185,7 +186,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
             return (
               <div
                 key={toolIndex}
-                className="rounded-2xl p-3 sm:p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700 w-full"
+                className="rounded-2xl p-3 sm:p-4 bg-red-900/20 backdrop-blur-md border border-red-600/50 text-red-300 w-full"
               >
                 <div className="flex items-center gap-2 mb-2">
                   <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -193,14 +194,14 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                 </div>
                 <p className="text-xs sm:text-sm mb-2">{errorInfo.error}</p>
                 {errorInfo.suggestion && (
-                  <p className="text-xs sm:text-sm text-red-600 bg-red-50/50 p-2 rounded-lg">
+                  <p className="text-xs sm:text-sm text-red-600 bg-red-800/50 p-2 rounded-lg">
                     💡 <strong>Suggestion:</strong> {errorInfo.suggestion}
                   </p>
                 )}
                 {errorInfo.details && (
                   <details className="mt-2">
-                    <summary className="text-xs cursor-pointer hover:text-red-800">Technical Details</summary>
-                    <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">{errorInfo.details}</pre>
+                    <summary className="text-xs cursor-pointer hover:text-red-200">Technical Details</summary>
+                    <pre className="text-xs mt-1 p-2 bg-red-800/30 rounded overflow-x-auto">{errorInfo.details}</pre>
                   </details>
                 )}
               </div>
@@ -215,7 +216,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
           return (
             <div
               key={toolIndex}
-              className="rounded-2xl p-3 sm:p-4 bg-orange-100/20 backdrop-blur-md border border-orange-300/50 text-orange-700 w-full"
+              className="rounded-2xl p-3 sm:p-4 bg-orange-900/20 backdrop-blur-md border border-orange-600/50 text-orange-300 w-full"
             >
               <div className="flex items-center gap-2 mb-2">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -228,7 +229,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                 <li>API rate limiting or connectivity issues</li>
                 <li>Token not supported by the data provider</li>
               </ul>
-              <div className="mt-3 p-2 bg-orange-50/50 rounded-lg">
+              <div className="mt-3 p-2 bg-orange-800/50 rounded-lg">
                 <p className="text-xs">
                   💡 <strong>Try:</strong> Check the token symbol spelling or try a different token
                 </p>
@@ -240,7 +241,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
           return (
             <div
               key={toolIndex}
-              className="rounded-2xl p-3 sm:p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700 w-full"
+              className="rounded-2xl p-3 sm:p-4 bg-red-900/20 backdrop-blur-md border border-red-600/50 text-red-300 w-full"
             >
               <div className="flex items-center gap-2 mb-2">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -248,8 +249,8 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
               </div>
               <p className="text-xs sm:text-sm mb-2">Failed to parse token information response</p>
               <details>
-                <summary className="text-xs cursor-pointer hover:text-red-800">Raw Response</summary>
-                <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">
+                <summary className="text-xs cursor-pointer hover:text-red-200">Raw Response</summary>
+                <pre className="text-xs mt-1 p-2 bg-red-800/30 rounded overflow-x-auto">
                   {JSON.stringify(toolInvocation.result, null, 2)}
                 </pre>
               </details>
@@ -286,7 +287,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
             return (
               <div
                 key={toolIndex}
-                className="rounded-2xl p-3 sm:p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700 w-full"
+                className="rounded-2xl p-3 sm:p-4 bg-red-900/20 backdrop-blur-md border border-red-600/50 text-red-300 w-full"
               >
                 <div className="flex items-center gap-2 mb-2">
                   <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -294,14 +295,14 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                 </div>
                 <p className="text-xs sm:text-sm mb-2">{errorInfo.error}</p>
                 {errorInfo.suggestion && (
-                  <p className="text-xs sm:text-sm text-red-600 bg-red-50/50 p-2 rounded-lg">
+                  <p className="text-xs sm:text-sm text-red-600 bg-red-800/50 p-2 rounded-lg">
                     💡 <strong>Suggestion:</strong> {errorInfo.suggestion}
                   </p>
                 )}
                 {errorInfo.details && (
                   <details className="mt-2">
-                    <summary className="text-xs cursor-pointer hover:text-red-800">Technical Details</summary>
-                    <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">{errorInfo.details}</pre>
+                    <summary className="text-xs cursor-pointer hover:text-red-200">Technical Details</summary>
+                    <pre className="text-xs mt-1 p-2 bg-red-800/30 rounded overflow-x-auto">{errorInfo.details}</pre>
                   </details>
                 )}
               </div>
@@ -323,7 +324,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
           return (
             <div
               key={toolIndex}
-              className="rounded-2xl p-3 sm:p-4 bg-orange-100/20 backdrop-blur-md border border-orange-300/50 text-orange-700 w-full"
+              className="rounded-2xl p-3 sm:p-4 bg-orange-900/20 backdrop-blur-md border border-orange-600/50 text-orange-300 w-full"
             >
               <div className="flex items-center gap-2 mb-2">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -336,7 +337,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                 <li>Network temporarily unavailable</li>
                 <li>Invalid network parameter</li>
               </ul>
-              <div className="mt-3 p-2 bg-orange-50/50 rounded-lg">
+              <div className="mt-3 p-2 bg-orange-800/50 rounded-lg">
                 <p className="text-xs">
                   💡 <strong>Try:</strong> Check the network name or try again in a few minutes
                 </p>
@@ -348,7 +349,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
           return (
             <div
               key={toolIndex}
-              className="rounded-2xl p-3 sm:p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700 w-full"
+              className="rounded-2xl p-3 sm:p-4 bg-red-900/20 backdrop-blur-md border border-red-600/50 text-red-300 w-full"
             >
               <div className="flex items-center gap-2 mb-2">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -356,8 +357,8 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
               </div>
               <p className="text-xs sm:text-sm mb-2">Failed to parse trending pools response</p>
               <details>
-                <summary className="text-xs cursor-pointer hover:text-red-800">Raw Response</summary>
-                <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">
+                <summary className="text-xs cursor-pointer hover:text-red-200">Raw Response</summary>
+                <pre className="text-xs mt-1 p-2 bg-red-800/30 rounded overflow-x-auto">
                   {JSON.stringify(toolInvocation.result, null, 2)}
                 </pre>
               </details>
@@ -394,7 +395,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
             return (
               <div
                 key={toolIndex}
-                className="rounded-2xl p-3 sm:p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700 w-full"
+                className="rounded-2xl p-3 sm:p-4 bg-red-900/20 backdrop-blur-md border border-red-600/50 text-red-300 w-full"
               >
                 <div className="flex items-center gap-2 mb-2">
                   <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -402,14 +403,14 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                 </div>
                 <p className="text-xs sm:text-sm mb-2">{errorInfo.error}</p>
                 {errorInfo.suggestion && (
-                  <p className="text-xs sm:text-sm text-red-600 bg-red-50/50 p-2 rounded-lg">
+                  <p className="text-xs sm:text-sm text-red-600 bg-red-800/50 p-2 rounded-lg">
                     💡 <strong>Suggestion:</strong> {errorInfo.suggestion}
                   </p>
                 )}
                 {errorInfo.details && (
                   <details className="mt-2">
-                    <summary className="text-xs cursor-pointer hover:text-red-800">Technical Details</summary>
-                    <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">{errorInfo.details}</pre>
+                    <summary className="text-xs cursor-pointer hover:text-red-200">Technical Details</summary>
+                    <pre className="text-xs mt-1 p-2 bg-red-800/30 rounded overflow-x-auto">{errorInfo.details}</pre>
                   </details>
                 )}
               </div>
@@ -424,7 +425,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
           return (
             <div
               key={toolIndex}
-              className="rounded-2xl p-3 sm:p-4 bg-orange-100/20 backdrop-blur-md border border-orange-300/50 text-orange-700 w-full"
+              className="rounded-2xl p-3 sm:p-4 bg-orange-900/20 backdrop-blur-md border border-orange-600/50 text-orange-300 w-full"
             >
               <div className="flex items-center gap-2 mb-2">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -437,7 +438,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                 <li>Unsupported blockchain network</li>
                 <li>API rate limiting or connectivity issues</li>
               </ul>
-              <div className="mt-3 p-2 bg-orange-50/50 rounded-lg">
+              <div className="mt-3 p-2 bg-orange-800/50 rounded-lg">
                 <p className="text-xs">
                   💡 <strong>Try:</strong> Use different search terms or check the token symbol spelling
                 </p>
@@ -449,7 +450,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
           return (
             <div
               key={toolIndex}
-              className="rounded-2xl p-3 sm:p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700 w-full"
+              className="rounded-2xl p-3 sm:p-4 bg-red-900/20 backdrop-blur-md border border-red-600/50 text-red-300 w-full"
             >
               <div className="flex items-center gap-2 mb-2">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -457,8 +458,8 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
               </div>
               <p className="text-xs sm:text-sm mb-2">Failed to parse DEX pairs response</p>
               <details>
-                <summary className="text-xs cursor-pointer hover:text-red-800">Raw Response</summary>
-                <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">
+                <summary className="text-xs cursor-pointer hover:text-red-200">Raw Response</summary>
+                <pre className="text-xs mt-1 p-2 bg-red-800/30 rounded overflow-x-auto">
                   {JSON.stringify(toolInvocation.result, null, 2)}
                 </pre>
               </details>
@@ -494,7 +495,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
             return (
               <div
                 key={toolIndex}
-                className="rounded-2xl p-3 sm:p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700 w-full"
+                className="rounded-2xl p-3 sm:p-4 bg-red-900/20 backdrop-blur-md border border-red-600/50 text-red-300 w-full"
               >
                 <div className="flex items-center gap-2 mb-2">
                   <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -502,14 +503,14 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                 </div>
                 <p className="text-xs sm:text-sm mb-2">{errorInfo.error}</p>
                 {errorInfo.suggestion && (
-                  <p className="text-xs sm:text-sm text-red-600 bg-red-50/50 p-2 rounded-lg">
+                  <p className="text-xs sm:text-sm text-red-600 bg-red-800/50 p-2 rounded-lg">
                     💡 <strong>Suggestion:</strong> {errorInfo.suggestion}
                   </p>
                 )}
                 {errorInfo.details && (
                   <details className="mt-2">
-                    <summary className="text-xs cursor-pointer hover:text-red-800">Technical Details</summary>
-                    <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">{errorInfo.details}</pre>
+                    <summary className="text-xs cursor-pointer hover:text-red-200">Technical Details</summary>
+                    <pre className="text-xs mt-1 p-2 bg-red-800/30 rounded overflow-x-auto">{errorInfo.details}</pre>
                   </details>
                 )}
               </div>
@@ -525,7 +526,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
           return (
             <div
               key={toolIndex}
-              className="rounded-2xl p-3 sm:p-4 bg-orange-100/20 backdrop-blur-md border border-orange-300/50 text-orange-700 w-full"
+              className="rounded-2xl p-3 sm:p-4 bg-orange-900/20 backdrop-blur-md border border-orange-600/50 text-orange-300 w-full"
             >
               <div className="flex items-center gap-2 mb-2">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -538,7 +539,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                 <li>API rate limiting or connectivity issues</li>
                 <li>Wallet is on an unsupported network</li>
               </ul>
-              <div className="mt-3 p-2 bg-orange-50/50 rounded-lg">
+              <div className="mt-3 p-2 bg-orange-800/50 rounded-lg">
                 <p className="text-xs">
                   💡 <strong>Try:</strong> Double-check the wallet address or try again in a few minutes
                 </p>
@@ -550,7 +551,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
           return (
             <div
               key={toolIndex}
-              className="rounded-2xl p-3 sm:p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700 w-full"
+              className="rounded-2xl p-3 sm:p-4 bg-red-900/20 backdrop-blur-md border border-red-600/50 text-red-300 w-full"
             >
               <div className="flex items-center gap-2 mb-2">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -558,8 +559,8 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
               </div>
               <p className="text-xs sm:text-sm mb-2">Failed to parse wallet analysis response</p>
               <details>
-                <summary className="text-xs cursor-pointer hover:text-red-800">Raw Response</summary>
-                <pre className="text-xs mt-1 p-2 bg-red-50/30 rounded overflow-x-auto">
+                <summary className="text-xs cursor-pointer hover:text-red-200">Raw Response</summary>
+                <pre className="text-xs mt-1 p-2 bg-red-800/30 rounded overflow-x-auto">
                   {JSON.stringify(toolInvocation.result, null, 2)}
                 </pre>
               </details>
@@ -584,7 +585,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
         </div>
       )}
 
-      <div className="flex flex-col justify-center gap-2 sm:gap-3 ">
+      <div className="flex flex-col justify-center gap-2 sm:gap-3 w-full min-w-0">
         {/* Tool Components */}
         {toolComponents?.some((component) => component !== null) && (
           <div className="flex flex-col gap-2 sm:gap-3 w-full min-w-0">{toolComponents}</div>
@@ -596,12 +597,12 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
             className={cn(
               "rounded-2xl px-3 py-3 sm:px-4 sm:py-4 backdrop-blur-md shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)] w-full min-w-0",
               isUser
-                ? "bg-gradient-to-br from-purple-500/80 to-blue-500/80  break-words text-white border border-white/30"
-                : "bg-white/18 border border-white/35",
+                ? "bg-gradient-to-br from-purple-500/80 to-blue-500/80 text-white border border-white/30"
+                : "bg-gray-800/40 border border-gray-600/50",
             )}
           >
             {isProcessingTool ? (
-              <div className="flex items-center gap-2 text-muted-foreground">
+              <div className="flex items-center gap-2 text-gray-400">
                 <div className="flex gap-1">
                   <span className="animate-bounce">.</span>
                   <span className="animate-bounce delay-100">.</span>
@@ -613,7 +614,13 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
               <ReactMarkdown
                 components={{
                   p({ children }) {
-                    return <p className="mb-2 last:mb-0 leading-relaxed text-xs sm:text-sm">{children}</p>
+                    return (
+                      <p
+                        className={cn("mb-2 last:mb-0 leading-relaxed text-xs sm:text-sm", !isUser && "text-gray-200")}
+                      >
+                        {children}
+                      </p>
+                    )
                   },
                   ul({ children }) {
                     return <ul className="list-disc ml-4 mb-2 space-y-1">{children}</ul>
@@ -624,20 +631,52 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                   li({ children }) {
                     // Hide list items if we have tool components to avoid duplication
                     return toolComponents?.some((component) => component !== null) ? null : (
-                      <li className="leading-relaxed text-xs sm:text-sm">{children}</li>
+                      <li className={cn("leading-relaxed text-xs sm:text-sm", !isUser && "text-gray-200")}>
+                        {children}
+                      </li>
                     )
                   },
                   h1({ children }) {
-                    return <h1 className="text-base sm:text-lg font-bold mb-2 mt-4 first:mt-0">{children}</h1>
+                    return (
+                      <h1
+                        className={cn(
+                          "text-base sm:text-lg font-bold mb-2 mt-4 first:mt-0",
+                          !isUser && "text-gray-100",
+                        )}
+                      >
+                        {children}
+                      </h1>
+                    )
                   },
                   h2({ children }) {
-                    return <h2 className="text-sm sm:text-base font-bold mb-2 mt-4 first:mt-0">{children}</h2>
+                    return (
+                      <h2
+                        className={cn(
+                          "text-sm sm:text-base font-bold mb-2 mt-4 first:mt-0",
+                          !isUser && "text-gray-100",
+                        )}
+                      >
+                        {children}
+                      </h2>
+                    )
                   },
                   h3({ children }) {
-                    return <h3 className="text-xs sm:text-sm font-bold mb-2 mt-3 first:mt-0">{children}</h3>
+                    return (
+                      <h3
+                        className={cn("text-xs sm:text-sm font-bold mb-2 mt-3 first:mt-0", !isUser && "text-gray-100")}
+                      >
+                        {children}
+                      </h3>
+                    )
                   },
                   blockquote({ children }) {
-                    return <blockquote className="border-l-2 border-purple-400 pl-4 italic my-2">{children}</blockquote>
+                    return (
+                      <blockquote
+                        className={cn("border-l-2 border-purple-400 pl-4 italic my-2", !isUser && "text-gray-200")}
+                      >
+                        {children}
+                      </blockquote>
+                    )
                   },
                   a({ children, href }) {
                     return (
@@ -659,10 +698,28 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                     )
                   },
                   th({ children }) {
-                    return <th className="px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium bg-white/10">{children}</th>
+                    return (
+                      <th
+                        className={cn(
+                          "px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium bg-white/10",
+                          !isUser && "text-gray-200",
+                        )}
+                      >
+                        {children}
+                      </th>
+                    )
                   },
                   td({ children }) {
-                    return <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm border-t border-white/10">{children}</td>
+                    return (
+                      <td
+                        className={cn(
+                          "px-2 sm:px-4 py-2 text-xs sm:text-sm border-t border-white/10",
+                          !isUser && "text-gray-200",
+                        )}
+                      >
+                        {children}
+                      </td>
+                    )
                   },
                 }}
               >

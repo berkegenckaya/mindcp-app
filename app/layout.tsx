@@ -34,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en">
 
-      <body className={`${space.className}`}>
+      <body className={`${space.className} bg-black`}>
          <link
           rel="icon"
           href="/f5.png"

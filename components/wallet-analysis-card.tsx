@@ -132,7 +132,7 @@ export function WalletAnalysisCard({ walletData }: WalletAnalysisCardProps) {
 
   return (
     <div className="w-full">
-      <Card className="relative group rounded-2xl border border-white/35 bg-white/18 backdrop-blur-md shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)] transition-all duration-300 hover:bg-white/26">
+      <Card className="relative group rounded-2xl border border-gray-700/50 bg-gray-800/40 backdrop-blur-md shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)] transition-all duration-300 hover:bg-gray-800/60">
         {/* Header */}
         <CardHeader className="pb-3 sm:pb-4">
           <div className="flex items-center gap-2 sm:gap-4">
@@ -150,19 +150,19 @@ export function WalletAnalysisCard({ walletData }: WalletAnalysisCardProps) {
               </CardTitle>
               <div className="flex items-center gap-2 sm:gap-3 mt-2 flex-wrap">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs sm:text-sm text-gray-700">
+                  <span className="font-mono text-xs sm:text-sm text-gray-200">
                     {formatAddress(walletData.address)}
                   </span>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => copyToClipboard(walletData.address)}
-                    className="h-5 w-5 sm:h-6 sm:w-6 p-0 bg-white/10 hover:bg-white/20"
+                    className="h-5 w-5 sm:h-6 sm:w-6 p-0 bg-gray-700/30 hover:bg-gray-600/40"
                   >
                     {copied ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
                   </Button>
                 </div>
-                <Badge variant="outline" className="bg-blue-50/20 text-blue-700 border-blue-300/50 text-xs">
+                <Badge variant="outline" className="bg-blue-900/30 text-blue-300 border-blue-600/50 text-xs">
                   {getChainDisplayName(walletData.summary.most_active_chain)}
                 </Badge>
               </div>
@@ -170,8 +170,8 @@ export function WalletAnalysisCard({ walletData }: WalletAnalysisCardProps) {
 
             {/* Key Metrics */}
             <div className="text-right">
-              <div className="text-lg sm:text-2xl font-bold text-gray-900">{walletData.summary.total_volume}</div>
-              <div className="text-xs sm:text-sm text-gray-600">Total Volume</div>
+              <div className="text-lg sm:text-2xl font-bold text-white">{walletData.summary.total_volume}</div>
+              <div className="text-xs sm:text-sm text-gray-300">Total Volume</div>
               <div className="flex items-center gap-1 justify-end mt-1">
                 {activityTrend.icon}
                 <span className={`text-xs sm:text-sm ${activityTrend.color}`}>{activityTrend.text}</span>
@@ -182,7 +182,7 @@ export function WalletAnalysisCard({ walletData }: WalletAnalysisCardProps) {
 
         <CardContent className="p-3 sm:p-6 pt-0">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 bg-white/20 backdrop-blur-sm text-xs sm:text-sm">
+            <TabsList className="grid w-full grid-cols-4 bg-gray-700/30 backdrop-blur-sm text-xs sm:text-sm">
               <TabsTrigger value="overview" className="text-xs sm:text-sm">
                 Overview
               </TabsTrigger>
@@ -201,43 +201,41 @@ export function WalletAnalysisCard({ walletData }: WalletAnalysisCardProps) {
             <TabsContent value="overview" className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
               {/* Key Stats Grid */}
               <div className="grid grid-cols-2 gap-2 sm:gap-4">
-                <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+                <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/30 rounded-xl p-3 sm:p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <Hash className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500" />
-                    <span className="text-xs sm:text-sm font-medium text-gray-600">Transactions</span>
+                    <span className="text-xs sm:text-sm font-medium text-gray-300">Transactions</span>
                   </div>
-                  <div className="text-sm sm:text-lg font-bold text-gray-900">
-                    {walletData.summary.total_transactions}
-                  </div>
+                  <div className="text-sm sm:text-lg font-bold text-white">{walletData.summary.total_transactions}</div>
                 </div>
 
-                <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+                <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/30 rounded-xl p-3 sm:p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
-                    <span className="text-xs sm:text-sm font-medium text-gray-600">Volume</span>
+                    <span className="text-xs sm:text-sm font-medium text-gray-300">Volume</span>
                   </div>
-                  <div className="text-sm sm:text-lg font-bold text-gray-900">{walletData.summary.total_volume}</div>
+                  <div className="text-sm sm:text-lg font-bold text-white">{walletData.summary.total_volume}</div>
                 </div>
 
-                <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+                <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/30 rounded-xl p-3 sm:p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <Zap className="h-3 w-3 sm:h-4 sm:w-4 text-orange-500" />
-                    <span className="text-xs sm:text-sm font-medium text-gray-600">Gas Spent</span>
+                    <span className="text-xs sm:text-sm font-medium text-gray-300">Gas Spent</span>
                   </div>
-                  <div className="text-sm sm:text-lg font-bold text-gray-900">{walletData.summary.gas_spent}</div>
+                  <div className="text-sm sm:text-lg font-bold text-white">{walletData.summary.gas_spent}</div>
                 </div>
 
-                <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+                <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/30 rounded-xl p-3 sm:p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <Network className="h-3 w-3 sm:h-4 sm:w-4 text-purple-500" />
-                    <span className="text-xs sm:text-sm font-medium text-gray-600">Chains</span>
+                    <span className="text-xs sm:text-sm font-medium text-gray-300">Chains</span>
                   </div>
-                  <div className="text-sm sm:text-lg font-bold text-gray-900">{walletData.summary.chains_active}</div>
+                  <div className="text-sm sm:text-lg font-bold text-white">{walletData.summary.chains_active}</div>
                 </div>
               </div>
 
               {/* Active Chains */}
-              <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+              <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/30 rounded-xl p-3 sm:p-4">
                 <h3 className="text-sm sm:text-lg font-semibold mb-3 flex items-center gap-2">
                   <Network className="h-4 w-4 sm:h-5 sm:w-5 text-purple-500" />
                   Active Chains
@@ -247,7 +245,7 @@ export function WalletAnalysisCard({ walletData }: WalletAnalysisCardProps) {
                     <Badge
                       key={chain}
                       variant="outline"
-                      className="bg-purple-50/20 text-purple-700 border-purple-300/50 text-xs"
+                      className="bg-purple-900/30 text-purple-300 border-purple-600/50 text-xs"
                     >
                       {getChainDisplayName(chain)}
                     </Badge>
@@ -259,29 +257,29 @@ export function WalletAnalysisCard({ walletData }: WalletAnalysisCardProps) {
             {/* Activity Tab */}
             <TabsContent value="activity" className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
               {/* Activity Timeline */}
-              <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+              <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/30 rounded-xl p-3 sm:p-4">
                 <h3 className="text-sm sm:text-lg font-semibold mb-3 flex items-center gap-2">
                   <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
                   Activity Timeline
                 </h3>
                 <div className="grid grid-cols-3 gap-2 sm:gap-4">
                   <div className="text-center">
-                    <div className="text-lg sm:text-2xl font-bold text-gray-900">{walletData.activity.last_24h}</div>
-                    <div className="text-xs sm:text-sm text-gray-600">Last 24 Hours</div>
+                    <div className="text-lg sm:text-2xl font-bold text-white">{walletData.activity.last_24h}</div>
+                    <div className="text-xs sm:text-sm text-gray-300">Last 24 Hours</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg sm:text-2xl font-bold text-gray-900">{walletData.activity.last_7d}</div>
-                    <div className="text-xs sm:text-sm text-gray-600">Last 7 Days</div>
+                    <div className="text-lg sm:text-2xl font-bold text-white">{walletData.activity.last_7d}</div>
+                    <div className="text-xs sm:text-sm text-gray-300">Last 7 Days</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg sm:text-2xl font-bold text-gray-900">{walletData.activity.last_30d}</div>
-                    <div className="text-xs sm:text-sm text-gray-600">Last 30 Days</div>
+                    <div className="text-lg sm:text-2xl font-bold text-white">{walletData.activity.last_30d}</div>
+                    <div className="text-xs sm:text-sm text-gray-300">Last 30 Days</div>
                   </div>
                 </div>
               </div>
 
               {/* Transaction Types */}
-              <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+              <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/30 rounded-xl p-3 sm:p-4">
                 <h3 className="text-sm sm:text-lg font-semibold mb-3 flex items-center gap-2">
                   <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
                   Transaction Types
@@ -291,10 +289,10 @@ export function WalletAnalysisCard({ walletData }: WalletAnalysisCardProps) {
                     <div key={type} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {getTransactionTypeIcon(type)}
-                        <span className="text-xs sm:text-sm font-medium capitalize">{type}</span>
+                        <span className="text-xs sm:text-sm font-medium capitalize text-gray-200">{type}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs sm:text-sm font-semibold">{count}</span>
+                        <span className="text-xs sm:text-sm font-semibold text-gray-200">{count}</span>
                         <div className="w-16 sm:w-20 bg-gray-200 rounded-full h-2">
                           <div
                             className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full"
@@ -312,7 +310,7 @@ export function WalletAnalysisCard({ walletData }: WalletAnalysisCardProps) {
 
             {/* Tokens Tab */}
             <TabsContent value="tokens" className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
-              <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+              <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/30 rounded-xl p-3 sm:p-4">
                 <h3 className="text-sm sm:text-lg font-semibold mb-3 flex items-center gap-2">
                   <Coins className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500" />
                   Top Tokens by Value
@@ -321,22 +319,22 @@ export function WalletAnalysisCard({ walletData }: WalletAnalysisCardProps) {
                   {walletData.top_tokens.map((token, index) => (
                     <div
                       key={token.symbol}
-                      className="flex items-center justify-between p-2 sm:p-3 bg-white/10 rounded-lg"
+                      className="flex items-center justify-between p-2 sm:p-3 bg-gray-700/20 rounded-lg"
                     >
                       <div className="flex items-center gap-2 sm:gap-3">
                         <div className="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg text-white font-bold text-xs sm:text-sm">
                           #{index + 1}
                         </div>
                         <div>
-                          <div className="font-semibold text-gray-900 text-sm sm:text-base">{token.symbol}</div>
-                          <div className="text-xs text-gray-600">{token.name}</div>
+                          <div className="font-semibold text-white text-sm sm:text-base">{token.symbol}</div>
+                          <div className="text-xs text-gray-300">{token.name}</div>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="font-semibold text-gray-900 text-sm sm:text-base">
+                        <div className="font-semibold text-white text-sm sm:text-base">
                           {token.total_value_formatted}
                         </div>
-                        <div className="text-xs text-gray-600">{token.count} transactions</div>
+                        <div className="text-xs text-gray-300">{token.count} transactions</div>
                       </div>
                     </div>
                   ))}
@@ -346,7 +344,7 @@ export function WalletAnalysisCard({ walletData }: WalletAnalysisCardProps) {
 
             {/* Transactions Tab */}
             <TabsContent value="transactions" className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
-              <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-3 sm:p-4">
+              <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/30 rounded-xl p-3 sm:p-4">
                 <h3 className="text-sm sm:text-lg font-semibold mb-3 flex items-center gap-2">
                   <Activity className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
                   Recent Activity
@@ -355,15 +353,15 @@ export function WalletAnalysisCard({ walletData }: WalletAnalysisCardProps) {
                   {walletData.recent_activity.map((activity) => (
                     <div
                       key={activity.hash}
-                      className="flex items-center justify-between p-2 sm:p-3 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+                      className="flex items-center justify-between p-2 sm:p-3 bg-gray-700/20 rounded-lg hover:bg-gray-700/30 transition-colors"
                     >
                       <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                         {getTransactionTypeIcon(activity.type)}
                         <div className="min-w-0 flex-1">
-                          <div className="text-xs sm:text-sm font-medium text-gray-900 line-clamp-1">
+                          <div className="text-xs sm:text-sm font-medium text-white line-clamp-1">
                             {activity.description}
                           </div>
-                          <div className="flex items-center gap-1 sm:gap-2 text-xs text-gray-600 flex-wrap">
+                          <div className="flex items-center gap-1 sm:gap-2 text-xs text-gray-300 flex-wrap">
                             <Calendar className="h-3 w-3" />
                             <span>{activity.timestamp_formatted}</span>
                             <Badge variant="outline" className="text-xs">
@@ -373,7 +371,7 @@ export function WalletAnalysisCard({ walletData }: WalletAnalysisCardProps) {
                         </div>
                       </div>
                       <div className="text-right flex-shrink-0 ml-2">
-                        <div className="font-semibold text-gray-900 text-xs sm:text-sm">{activity.value_formatted}</div>
+                        <div className="font-semibold text-white text-xs sm:text-sm">{activity.value_formatted}</div>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -381,7 +379,7 @@ export function WalletAnalysisCard({ walletData }: WalletAnalysisCardProps) {
                             const explorerUrl = getTransactionExplorerUrl(activity.chain, activity.hash)
                             if (explorerUrl) window.open(explorerUrl, "_blank")
                           }}
-                          className="h-5 w-5 sm:h-6 sm:w-6 p-0 bg-white/10 hover:bg-white/20"
+                          className="h-5 w-5 sm:h-6 sm:w-6 p-0 bg-gray-700/30 hover:bg-gray-600/40"
                         >
                           <ExternalLink className="h-3 w-3" />
                         </Button>
@@ -395,7 +393,7 @@ export function WalletAnalysisCard({ walletData }: WalletAnalysisCardProps) {
 
           {/* Credits Used */}
           <div className="mt-3 sm:mt-4 text-center">
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-gray-400">
               Analysis powered by Cielo Finance • {walletData.credits_used} credits used
             </span>
           </div>

@@ -24,7 +24,9 @@ export function BasicAgentsGrid({ agents, onAgentClick }: BasicAgentsGridProps) 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
       {agents.map((agent) => (
-        <BasicAgentCard key={agent.id} agent={agent} onClick={onAgentClick} />
+        <div key={agent.id} onClick={() => onAgentClick(agent.id)} style={{ cursor: "pointer" }}>
+          <BasicAgentCard agent={agent} />
+        </div>
       ))}
     </div>
   )

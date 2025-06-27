@@ -9,7 +9,7 @@ import Link from "next/link";
 
 export default function RevenueStakingComingSoon() {
   return (
-    <section className="relative flex min-h-[98.5vh] w-full items-center justify-center overflow-hidden py-24">
+    <section className="relative bg-black flex h-screen w-full items-center justify-center overflow-hidden py-24">
       {/* ===== Floating glows ===== */}
          <SidebarTrigger className="absolute left-4 top-4 z-20" />
       <div className="pointer-events-none absolute inset-0 z-0">
@@ -21,10 +21,10 @@ export default function RevenueStakingComingSoon() {
       {/* ===== Glass card ===== */}
       <div
         className="
-          relative z-10 mx-4 max-w-xl space-y-8 rounded-2xl p-10 text-center
-          border border-white/35
-          bg-white/18 backdrop-blur-md
-          shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_8px_30px_rgba(0,0,0,0.16)]
+           relative z-10 mx-4 max-w-xl space-y-8 rounded-2xl p-10 text-center
+          border border-gray-700/50
+          bg-black/40 backdrop-blur-md
+          shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1),0_8px_30px_rgba(0,0,0,0.4)]
         "
       >
         {/* badge */}
@@ -32,11 +32,11 @@ export default function RevenueStakingComingSoon() {
             <Hourglass size={38} className="text-white" />
        </IconBadge>
 
-        <h1 className="text-3xl font-extrabold text-gray-900">
+        <h1 className="text-3xl font-extrabold text-white">
           Revenue&nbsp;/&nbsp;Staking
         </h1>
 
-        <p className="mx-auto max-w-md text-lg text-gray-700">
+        <p className="mx-auto max-w-md text-lg text-gray-300">
           Harvest rewards, stake your MCP, track protocol fees – it’s all on the
           way. Sit tight while we finish the yield engine.
         </p>

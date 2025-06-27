@@ -66,7 +66,7 @@ export function TokenInfoCard({ tokenInfo }: TokenInfoCardProps) {
   }
 
   return (
-    <Card className="relative group rounded-2xl border border-white/35 bg-white/18 backdrop-blur-md shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)] transition-all duration-300 hover:bg-white/26 hover:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.55),0_8px_28px_rgba(0,0,0,0.2)]">
+    <Card className="relative group rounded-2xl border border-gray-700/50 bg-gray-800/40 backdrop-blur-md shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)] transition-all duration-300 hover:bg-gray-800/60 hover:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.15),0_8px_28px_rgba(0,0,0,0.4)]">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -83,8 +83,8 @@ export function TokenInfoCard({ tokenInfo }: TokenInfoCardProps) {
                 {tokenInfo.name}
               </CardTitle>
               <div className="flex items-center gap-2">
-                <Badge className="text-xs bg-white/20 backdrop-blur-sm border-white/30">{tokenInfo.symbol}</Badge>
-                <Badge variant="outline" className="text-xs bg-purple-50/20 text-purple-700 border-purple-300/50">
+                <Badge className="text-xs bg-gray-700/40 backdrop-blur-sm border-gray-500/40">{tokenInfo.symbol}</Badge>
+                <Badge variant="outline" className="text-xs bg-purple-900/30 text-purple-300 border-purple-600/50">
                   {tokenInfo.blockchain}
                 </Badge>
               </div>
@@ -93,7 +93,7 @@ export function TokenInfoCard({ tokenInfo }: TokenInfoCardProps) {
 
           {/* Price and Trend */}
           <div className="text-right">
-            <div className="text-2xl font-bold text-gray-900">{tokenInfo.price}</div>
+            <div className="text-2xl font-bold text-white">{tokenInfo.price}</div>
             <div className={`flex items-center gap-1 justify-end ${getTrendColor()}`}>
               {getTrendIcon()}
               <span className="text-sm font-medium">{tokenInfo.price_change_24h}</span>
@@ -105,42 +105,42 @@ export function TokenInfoCard({ tokenInfo }: TokenInfoCardProps) {
       <CardContent className="space-y-4">
         {/* Market Data Grid */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="rounded-xl bg-white/20 backdrop-blur-sm border border-white/30 p-4">
-            <div className="text-xs text-gray-600 font-medium mb-1">Market Cap</div>
-            <div className="text-lg font-semibold text-gray-900">{tokenInfo.market_cap}</div>
+          <div className="rounded-xl bg-gray-700/30 backdrop-blur-sm border border-gray-600/30 p-4">
+            <div className="text-xs text-gray-300 font-medium mb-1">Market Cap</div>
+            <div className="text-lg font-semibold text-white">{tokenInfo.market_cap}</div>
           </div>
 
-          <div className="rounded-xl bg-white/20 backdrop-blur-sm border border-white/30 p-4">
-            <div className="text-xs text-gray-600 font-medium mb-1">24h Volume</div>
-            <div className="text-lg font-semibold text-gray-900">{tokenInfo.volume_24h}</div>
+          <div className="rounded-xl bg-gray-700/30 backdrop-blur-sm border border-gray-600/30 p-4">
+            <div className="text-xs text-gray-300 font-medium mb-1">24h Volume</div>
+            <div className="text-lg font-semibold text-white">{tokenInfo.volume_24h}</div>
           </div>
 
-          <div className="rounded-xl bg-white/20 backdrop-blur-sm border border-white/30 p-4">
-            <div className="text-xs text-gray-600 font-medium mb-1">Circulating Supply</div>
-            <div className="text-lg font-semibold text-gray-900">{tokenInfo.circulating_supply}</div>
+          <div className="rounded-xl bg-gray-700/30 backdrop-blur-sm border border-gray-600/30 p-4">
+            <div className="text-xs text-gray-300 font-medium mb-1">Circulating Supply</div>
+            <div className="text-lg font-semibold text-white">{tokenInfo.circulating_supply}</div>
           </div>
 
-          <div className="rounded-xl bg-white/20 backdrop-blur-sm border border-white/30 p-4">
-            <div className="text-xs text-gray-600 font-medium mb-1">Total Supply</div>
-            <div className="text-lg font-semibold text-gray-900">{tokenInfo.total_supply}</div>
+          <div className="rounded-xl bg-gray-700/30 backdrop-blur-sm border border-gray-600/30 p-4">
+            <div className="text-xs text-gray-300 font-medium mb-1">Total Supply</div>
+            <div className="text-lg font-semibold text-white">{tokenInfo.total_supply}</div>
           </div>
         </div>
 
         {/* Additional Info */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between rounded-xl bg-white/20 backdrop-blur-sm border border-white/30 p-3">
+          <div className="flex items-center justify-between rounded-xl bg-gray-700/30 backdrop-blur-sm border border-gray-600/30 p-3">
             <div>
-              <div className="text-xs text-gray-600 font-medium">Max Supply</div>
-              <div className="text-sm font-semibold text-gray-900">{tokenInfo.max_supply}</div>
+              <div className="text-xs text-gray-300 font-medium">Max Supply</div>
+              <div className="text-sm font-semibold text-white">{tokenInfo.max_supply}</div>
             </div>
           </div>
 
           {/* Contract Address */}
-          <div className="rounded-xl bg-white/20 backdrop-blur-sm border border-white/30 p-3">
+          <div className="rounded-xl bg-gray-700/30 backdrop-blur-sm border border-gray-600/30 p-3">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-xs text-gray-600 font-medium mb-1">Contract Address</div>
-                <div className="text-sm font-mono text-gray-900">{formatAddress(tokenInfo.contract_address)}</div>
+                <div className="text-xs text-gray-300 font-medium mb-1">Contract Address</div>
+                <div className="text-sm font-mono text-white">{formatAddress(tokenInfo.contract_address)}</div>
               </div>
               {tokenInfo.contract_address !== "Native token" && (
                 <div className="flex gap-2">
@@ -148,7 +148,7 @@ export function TokenInfoCard({ tokenInfo }: TokenInfoCardProps) {
                     variant="ghost"
                     size="sm"
                     onClick={() => copyToClipboard(tokenInfo.contract_address)}
-                    className="h-8 w-8 p-0 bg-white/10 hover:bg-white/20"
+                    className="h-8 w-8 p-0 bg-gray-700/30 hover:bg-gray-600/40"
                   >
                     {copied ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
                   </Button>
@@ -159,7 +159,7 @@ export function TokenInfoCard({ tokenInfo }: TokenInfoCardProps) {
                       const explorerUrl = getExplorerUrl(tokenInfo.blockchain, tokenInfo.contract_address)
                       if (explorerUrl) window.open(explorerUrl, "_blank")
                     }}
-                    className="h-8 w-8 p-0 bg-white/10 hover:bg-white/20"
+                    className="h-8 w-8 p-0 bg-gray-700/30 hover:bg-gray-600/40"
                   >
                     <ExternalLink className="h-3 w-3" />
                   </Button>

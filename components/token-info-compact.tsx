@@ -1,6 +1,6 @@
 "use client"
 
-import { TrendingUp, TrendingDown, Minus, ExternalLink } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, ExternalLink } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 
@@ -54,7 +54,7 @@ export function TokenInfoCompact({ tokenInfo }: TokenInfoCompactProps) {
 
   return (
     <div className="w-full">
-      <div className="rounded-xl bg-white/20 backdrop-blur-sm border border-white/30 p-3 sm:p-4 my-2">
+      <div className="rounded-xl bg-gray-800/40 backdrop-blur-sm border border-gray-600/50 p-3 sm:p-4 my-2">
         <div className="flex items-center gap-2 sm:gap-3 mb-3">
           <div className="relative h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0">
             {tokenInfo.image_url ? (
@@ -80,10 +80,10 @@ export function TokenInfoCompact({ tokenInfo }: TokenInfoCompactProps) {
             </div>
           </div>
           <div className="min-w-0 flex-1">
-            <div className="font-semibold text-gray-900 truncate text-sm sm:text-base">{tokenInfo.name}</div>
+            <div className="font-semibold text-white truncate text-sm sm:text-base">{tokenInfo.name}</div>
             <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
-              <Badge className="text-xs bg-white/30 backdrop-blur-sm border-white/40">{tokenInfo.symbol}</Badge>
-              <Badge variant="outline" className="text-xs bg-purple-50/30 text-purple-700 border-purple-300/50">
+              <Badge className="text-xs bg-gray-700/40 backdrop-blur-sm border-gray-500/40">{tokenInfo.symbol}</Badge>
+              <Badge variant="outline" className="text-xs bg-purple-900/30 text-purple-300 border-purple-600/50">
                 {tokenInfo.blockchain}
               </Badge>
             </div>
@@ -92,7 +92,7 @@ export function TokenInfoCompact({ tokenInfo }: TokenInfoCompactProps) {
             variant="ghost"
             size="sm"
             onClick={openCoinGecko}
-            className="h-6 w-6 sm:h-8 sm:w-8 p-0 bg-white/10 hover:bg-white/20 flex-shrink-0"
+            className="h-6 w-6 sm:h-8 sm:w-8 p-0 bg-gray-700/30 hover:bg-gray-600/40 flex-shrink-0"
             title="View on CoinGecko"
           >
             <ExternalLink className="h-3 w-3" />
@@ -101,30 +101,30 @@ export function TokenInfoCompact({ tokenInfo }: TokenInfoCompactProps) {
 
         {/* Description */}
         {tokenInfo.description && (
-          <div className="mb-3 p-2 bg-white/10 rounded-lg">
-            <p className="text-xs text-gray-700 line-clamp-2">{tokenInfo.description}</p>
+          <div className="mb-3 p-2 bg-gray-700/30 rounded-lg">
+            <p className="text-xs text-gray-200 line-clamp-2">{tokenInfo.description}</p>
           </div>
         )}
 
         <div className="grid grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm">
-          <div className="bg-white/10 rounded-lg p-2 sm:p-3">
-            <div className="text-xs text-gray-600 font-medium mb-1">Price</div>
-            <div className="font-semibold text-gray-900 text-sm sm:text-base">{tokenInfo.price}</div>
+          <div className="bg-gray-700/30 rounded-lg p-2 sm:p-3">
+            <div className="text-xs text-gray-300 font-medium mb-1">Price</div>
+            <div className="font-semibold text-white text-sm sm:text-base">{tokenInfo.price}</div>
           </div>
-          <div className="bg-white/10 rounded-lg p-2 sm:p-3">
-            <div className="text-xs text-gray-600 font-medium mb-1">24h Change</div>
+          <div className="bg-gray-700/30 rounded-lg p-2 sm:p-3">
+            <div className="text-xs text-gray-300 font-medium mb-1">24h Change</div>
             <div className={`flex items-center gap-1 font-semibold text-sm sm:text-base ${getTrendColor()}`}>
               {getTrendIcon()}
               {tokenInfo.price_change_24h}
             </div>
           </div>
-          <div className="bg-white/10 rounded-lg p-2 sm:p-3">
-            <div className="text-xs text-gray-600 font-medium mb-1">Market Cap</div>
-            <div className="font-semibold text-gray-900 text-xs sm:text-sm">{tokenInfo.market_cap}</div>
+          <div className="bg-gray-700/30 rounded-lg p-2 sm:p-3">
+            <div className="text-xs text-gray-300 font-medium mb-1">Market Cap</div>
+            <div className="font-semibold text-white text-xs sm:text-sm">{tokenInfo.market_cap}</div>
           </div>
-          <div className="bg-white/10 rounded-lg p-2 sm:p-3">
-            <div className="text-xs text-gray-600 font-medium mb-1">24h Volume</div>
-            <div className="font-semibold text-gray-900 text-xs sm:text-sm">{tokenInfo.volume_24h}</div>
+          <div className="bg-gray-700/30 rounded-lg p-2 sm:p-3">
+            <div className="text-xs text-gray-300 font-medium mb-1">24h Volume</div>
+            <div className="font-semibold text-white text-xs sm:text-sm">{tokenInfo.volume_24h}</div>
           </div>
         </div>
 
@@ -132,21 +132,21 @@ export function TokenInfoCompact({ tokenInfo }: TokenInfoCompactProps) {
         {(tokenInfo.circulating_supply || tokenInfo.total_supply || tokenInfo.max_supply) && (
           <div className="grid grid-cols-3 gap-1 sm:gap-2 mt-2 sm:mt-3 text-xs">
             {tokenInfo.circulating_supply && (
-              <div className="bg-white/10 rounded-lg p-2">
-                <div className="text-gray-600 font-medium mb-1">Circulating</div>
-                <div className="font-semibold text-gray-900 text-xs">{tokenInfo.circulating_supply}</div>
+              <div className="bg-gray-700/30 rounded-lg p-2">
+                <div className="text-gray-300 font-medium mb-1">Circulating</div>
+                <div className="font-semibold text-white text-xs">{tokenInfo.circulating_supply}</div>
               </div>
             )}
             {tokenInfo.total_supply && (
-              <div className="bg-white/10 rounded-lg p-2">
-                <div className="text-gray-600 font-medium mb-1">Total</div>
-                <div className="font-semibold text-gray-900 text-xs">{tokenInfo.total_supply}</div>
+              <div className="bg-gray-700/30 rounded-lg p-2">
+                <div className="text-gray-300 font-medium mb-1">Total</div>
+                <div className="font-semibold text-white text-xs">{tokenInfo.total_supply}</div>
               </div>
             )}
             {tokenInfo.max_supply && (
-              <div className="bg-white/10 rounded-lg p-2">
-                <div className="text-gray-600 font-medium mb-1">Max</div>
-                <div className="font-semibold text-gray-900 text-xs">{tokenInfo.max_supply}</div>
+              <div className="bg-gray-700/30 rounded-lg p-2">
+                <div className="text-gray-300 font-medium mb-1">Max</div>
+                <div className="font-semibold text-white text-xs">{tokenInfo.max_supply}</div>
               </div>
             )}
           </div>
