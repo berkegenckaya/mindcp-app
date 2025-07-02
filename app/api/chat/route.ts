@@ -3,6 +3,7 @@ import { openai } from "@ai-sdk/openai"
 import { getNetworkTrendingPoolsTool, getTokenInfoTool, getTrendingPoolsTool } from "@/app/tools/gecko-terminal"
 import { getDexPairInfoTool, searchDexPairsTool,getTokenPairsTool  } from "@/app/tools/dexscreener"
 import { getWalletAnalysisTool } from "@/app/tools/cielo"
+import { getTokenPools } from "@/app/tools/gecko-terminal/tool"
 
 
 export const maxDuration = 30
@@ -27,6 +28,7 @@ You have access to these tools:
 TOKEN INFORMATION:
 1. get_coingecko_token_info - Get detailed information about ANY cryptocurrency token (preferred for token queries)
 2. get_token_info - Get token info from Gecko Terminal (limited coverage, use as fallback)
+9. get_token_pools - Get Token Pools info from Gecko Terminal
 
 
 DEX POOLS & PAIRS:
@@ -41,12 +43,13 @@ WALLET ANALYSIS:
 8. get_wallet_analysis - Comprehensive wallet transaction analysis (Cielo Finance)
 
 TOOL PRIORITY & USAGE:
-- For TOKEN INFORMATION queries → ALWAYS use get_coingecko_token_info FIRST (broadest coverage)
+- For TOKEN INFORMATION queries → ALWAYS use get_token_pools FIRST (broadest coverage)
 - For TRENDING POOLS queries → use get_trending_pools or get_network_trending_pools
 - For DEX PAIR SEARCH queries → use search_dex_pairs (great for finding specific pairs)
 - For SPECIFIC PAIR INFO → use get_dex_pair_info (when you have chain + address)
 - For WALLET ANALYSIS → use get_wallet_analysis (comprehensive transaction history and insights)
 - For TOKEN INFO by ADDRESS → use get_token_info_address as a fallback
+
 
 When users ask about:
 - Specific tokens (BTC, ETH, DOGE, etc.) → use get_coingecko_token_info
@@ -94,7 +97,8 @@ IMPORTANT: Always return valid JSON from tools. If there's an error, return a pr
         search_dex_pairs: searchDexPairsTool,
         get_dex_pair_info: getDexPairInfoTool,
         get_wallet_analysis: getWalletAnalysisTool,
-        get_token_info_address: getTokenPairsTool, // Fallback for address-based queries
+        get_token_info_address: getTokenPairsTool,
+        get_token_pools: getTokenPools
       },
       onFinish: (result) => {
         console.log("Stream finished successfully:", {

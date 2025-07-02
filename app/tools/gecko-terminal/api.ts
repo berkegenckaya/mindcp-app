@@ -1,4 +1,4 @@
-import type { TokenData, TokenSearchResult } from "./types"
+import type { TokenData, TokenSearchResult,TokenPool } from "./types"
 
 export async function fetchTokenData(network: string, token: string): Promise<TokenData | null> {
   try {
@@ -51,6 +51,71 @@ export async function fetchTokenData(network: string, token: string): Promise<To
   } catch (error) {
     console.error("Error in fetchTokenData:", error)
     return null
+  }
+}
+
+export async function getTokenPools(
+  network: string,
+  tokenAddress: string
+): Promise<TokenPool[]> {
+  try {
+    const url = `https://api.geckoterminal.com/api/v2/networks/eth/tokens/${tokenAddress}/pools`
+    console.log('[GET]', url)
+
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'application/json',
+        'User-Agent': 'Mozilla/5.0 (compatible; TokenInfoBot/1.0)',
+      },
+    })
+
+    if (!response.ok) {
+      const err = await response.text()
+      throw new Error(`GT API ${response.status}: ${err}`)
+    }
+
+    const json = await response.json()
+
+    // Beklenen: { data: [ { id, type, attributes, relationships }, ... ] }
+    if (!Array.isArray(json?.data)) {
+      throw new Error('Unexpected API schema: "data" is not an array')
+    }
+
+    const pools: TokenPool[] = json.data.map((pool: any) => {
+      const attr = pool.attributes ?? {}
+      const rel  = pool.relationships ?? {}
+
+      return {
+        id: pool.id,
+        address: attr.address ?? '0x0',
+        name: attr.name ?? 'Unnamed pool',
+        dex:
+          rel.dex?.data?.id ??
+          null,
+
+        baseTokenId: rel.base_token?.data?.id ?? null,
+        quoteTokenId:
+          // bazı Curve havuzlarında quote_tokens listesi var
+          rel.quote_token?.data?.id ??
+          rel.quote_tokens?.data?.[0]?.id ??
+          null,
+
+        tokenPriceUsd: Number(attr.token_price_usd) || 0,
+        baseTokenPriceUsd: Number(attr.base_token_price_usd) || 0,
+        quoteTokenPriceUsd: Number(attr.quote_token_price_usd) || 0,
+        reserveUsd: Number(attr.reserve_in_usd) || 0,
+        volume24hUsd: Number(attr.volume_usd?.h24) || 0,
+        priceChange24h: Number(attr.price_change_percentage?.h24) || 0,
+      }
+    })
+
+    /** İstersen en likit havuzlar en başta olsun: */
+    pools.sort((a, b) => b.reserveUsd - a.reserveUsd)
+
+    return pools
+  } catch (err) {
+    console.error('getTokenPools error:', err)
+    return []
   }
 }
 

@@ -15,6 +15,24 @@ export interface TokenData {
   contract_address?: string
   blockchain?: string
 }
+export interface TokenPool {
+  id: string
+  address: string
+  name: string
+  dex: string | null
+
+  baseTokenId: string | null
+  quoteTokenId: string | null
+
+ 
+  tokenPriceUsd: number
+  baseTokenPriceUsd: number
+  quoteTokenPriceUsd: number
+  reserveUsd: number
+  volume24hUsd: number
+  priceChange24h: number
+}
+
 
 export interface GeckoTerminalResponse {
   data: {

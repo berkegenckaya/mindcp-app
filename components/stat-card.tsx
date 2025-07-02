@@ -12,6 +12,8 @@ type FancyCardProps = {
 export function FancyCard({ title, description, icon, href }: FancyCardProps) {
   const CardContent = () => (
     <>
+ <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-blue-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
+
       {/* link badge */}
       {href && (
         <div
@@ -19,8 +21,8 @@ export function FancyCard({ title, description, icon, href }: FancyCardProps) {
           absolute top-4 right-4
           inline-flex items-center justify-center
           w-8 h-8 rounded-xl
-          border border-white/40 bg-white/25 backdrop-blur-md
-          text-gray-700
+           bg-white/25 backdrop-blur-md
+          text-white
           shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4)]
           transition-all
           group-hover:bg-white/35
@@ -39,18 +41,18 @@ export function FancyCard({ title, description, icon, href }: FancyCardProps) {
       </div>
 
       {/* text */}
-      <h3 className="mb-1 text-lg font-semibold text-gray-900">{title}</h3>
-      <p className="text-sm text-gray-600">{description}</p>
+      <h3 className="mb-1 text-lg font-semibold text-white">{title}</h3>
+      <p className="text-sm text-gray-200">{description}</p>
     </>
   )
 
   const cardClasses = cn(
     `
     relative group p-5
-    rounded-2xl
-    border border-white/35
-    bg-white/18 backdrop-blur-md
-    shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)]
+    rounded-2xl 
+   
+    bg-gradient-to-br from-purple-500/5 via-blue-500/5 to-pink-500/5 backdrop-blur-md
+    shadow-[inset_0_0_0_1px_rgba(255,255,255,0.2),0_6px_22px_rgba(0,0,0,0.05)]
     transition-all duration-300
     hover:scale-[1.02] hover:bg-white/26
     hover:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.55),0_8px_28px_rgba(0,0,0,0.2)]

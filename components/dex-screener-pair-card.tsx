@@ -17,7 +17,7 @@ import {
   Users,
   ArrowUpDown,
   Info,
-  Star,
+  Zap,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -25,94 +25,94 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useState } from "react"
 
-interface DexPair {
-  id: string
-  name: string
+interface DexScreenerPair {
   chainId: string
   dexId: string
+  url: string
   pairAddress: string
   labels?: string[]
   baseToken: {
+    address: string
     name: string
     symbol: string
-    address: string
   }
   quoteToken: {
+    address: string
     name: string
     symbol: string
-    address: string
   }
-  price: string
   priceNative: string
-  price_change_24h: string
-  price_trend: "up" | "down" | "stable"
-  volume_24h: string
-  volume_6h: string
-  volume_1h: string
-  volume_5m: string
-  liquidity: string
-  liquidityBase: string
-  liquidityQuote: string
-  market_cap: string
-  fdv: string
-  transactions: {
-    h24: { buys: number; sells: number; total: number }
-    h6: { buys: number; sells: number; total: number }
-    h1: { buys: number; sells: number; total: number }
-    m5: { buys: number; sells: number; total: number }
+  priceUsd?: string
+  txns: {
+    m5: {
+      buys: number
+      sells: number
+    }
+    h1: {
+      buys: number
+      sells: number
+    }
+    h6: {
+      buys: number
+      sells: number
+    }
+    h24: {
+      buys: number
+      sells: number
+    }
   }
-  priceChanges: {
+  volume: {
+    h24: number
+    h6: number
+    h1: number
+    m5: number
+  }
+  priceChange: {
     m5: number
     h1: number
     h6: number
     h24: number
   }
-  pairCreatedAt?: string
-  url: string
-  image_url?: string
-  header_url?: string
-  websites?: Array<{
-    label: string
-    url: string
-  }>
-  socials?: Array<{
-    type: string
-    url: string
-  }>
-  boosts?: number
+  liquidity?: {
+    usd?: number
+    base: number
+    quote: number
+  }
+  fdv?: number
+  marketCap?: number
+  pairCreatedAt?: number
+  info?: {
+    imageUrl?: string
+    header?: string
+    openGraph?: string
+    websites?: Array<{
+      url: string
+    }>
+    socials?: Array<{
+      platform: string
+      handle: string
+    }>
+  }
+  boosts?: {
+    active: number
+  }
 }
 
-interface DexPairsCardProps {
-  pairs: DexPair[]
+interface DexScreenerPairCardProps {
+  pairs: DexScreenerPair[]
   onTokenClick?: (tokenSymbol: string, network: string) => void
 }
 
-export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
+export function DexScreenerPairCard({ pairs, onTokenClick }: DexScreenerPairCardProps) {
   const [copied, setCopied] = useState<string | null>(null)
 
-  const getTrendIcon = (trend: string) => {
-    switch (trend) {
-      case "up":
-        return <TrendingUp className="h-3 w-3 text-green-400" />
-      case "down":
-        return <TrendingDown className="h-3 w-3 text-red-400" />
-      default:
-        return <Minus className="h-3 w-3 text-gray-400" />
-    }
+  const getTrendIcon = (change: number) => {
+    if (change > 0) return <TrendingUp className="h-3 w-3 text-green-400" />
+    if (change < 0) return <TrendingDown className="h-3 w-3 text-red-400" />
+    return <Minus className="h-3 w-3 text-gray-400" />
   }
 
-  const getTrendColor = (trend: string) => {
-    switch (trend) {
-      case "up":
-        return "text-green-400"
-      case "down":
-        return "text-red-400"
-      default:
-        return "text-gray-400"
-    }
-  }
-
-  const getPriceChangeColor = (change: number) => {
+  const getTrendColor = (change: number) => {
     if (change > 0) return "text-green-400"
     if (change < 0) return "text-red-400"
     return "text-gray-400"
@@ -133,10 +133,18 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
     return `${address.slice(0, 6)}...${address.slice(-4)}`
   }
 
-  const handleTokenClick = (tokenSymbol: string, network: string) => {
-    if (onTokenClick) {
-      onTokenClick(tokenSymbol, network)
-    }
+  const formatNumber = (num: number, decimals = 2) => {
+    if (num >= 1e9) return `$${(num / 1e9).toFixed(decimals)}B`
+    if (num >= 1e6) return `$${(num / 1e6).toFixed(decimals)}M`
+    if (num >= 1e3) return `$${(num / 1e3).toFixed(decimals)}K`
+    return `$${num.toFixed(decimals)}`
+  }
+
+  const formatVolume = (num: number, decimals = 2) => {
+    if (num >= 1e9) return `${(num / 1e9).toFixed(decimals)}B`
+    if (num >= 1e6) return `${(num / 1e6).toFixed(decimals)}M`
+    if (num >= 1e3) return `${(num / 1e3).toFixed(decimals)}K`
+    return num.toFixed(decimals)
   }
 
   const getChainDisplayName = (chainId: string) => {
@@ -155,8 +163,8 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
     return chainNames[chainId] || chainId.toUpperCase()
   }
 
-  const getSocialIcon = (type: string) => {
-    switch (type.toLowerCase()) {
+  const getSocialIcon = (platform: string) => {
+    switch (platform.toLowerCase()) {
       case "twitter":
         return <Twitter className="h-3 w-3" />
       case "telegram":
@@ -172,31 +180,36 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
     return (buys / total) * 100
   }
 
+  const formatDate = (timestamp?: number) => {
+    if (!timestamp) return "Unknown"
+    return new Date(timestamp).toLocaleDateString()
+  }
+
   return (
     <div className="w-full max-w-full">
       {pairs.map((pair, index) => (
         <Card
-          key={pair.id}
+          key={`${pair.chainId}-${pair.pairAddress}`}
           className="
             relative group rounded-2xl border border-white/10
-            bg-gradient-to-br from-gray-900 via-black to-gray-900 backdrop-blur-xl
+            bg-gradient-to-br from-white/8 via-white/5 to-white/3 backdrop-blur-xl
             shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08),0_8px_32px_rgba(0,0,0,0.4)]
-            transition-all duration-300  hover:border-white/20 mb-4 sm:mb-6
+            transition-all duration-300 hover:bg-gradient-to-br hover:from-white/12 hover:via-white/8 hover:to-white/5 hover:border-white/20 mb-4 sm:mb-6
           "
         >
           {/* Enhanced glassmorphic background */}
           <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-blue-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
 
           {/* Header with Token Image */}
-          <CardHeader className="pb-1 sm:pb-4 px-1 sm:px-6 relative z-10">
+          <CardHeader className="pb-1 sm:pb-4 px-3 sm:px-6 relative z-10">
             <div className="flex items-start gap-1 sm:gap-4">
               {/* Token Image */}
               <div className="relative h-10 w-10 sm:h-16 sm:w-16 flex-shrink-0">
-                {pair.image_url ? (
+                {pair.info?.imageUrl ? (
                   <img
-                    src={pair.image_url || "/placeholder.svg"}
+                    src={pair.info.imageUrl || "/placeholder.svg"}
                     alt={pair.baseToken.symbol}
-                    className="h-12 w-12 sm:h-16 sm:w-16 rounded-xl object-cover border-2 border-white/30"
+                    className="h-10 w-10 sm:h-16 sm:w-16 rounded-xl object-cover border-2 border-white/30"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement
                       target.style.display = "none"
@@ -205,24 +218,24 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                   />
                 ) : null}
                 <div
-                  className={`${pair.image_url ? "hidden" : ""} absolute inset-0 scale-95 rounded-xl bg-gradient-to-br from-purple-400/80 to-cyan-400/80 blur-md opacity-90`}
+                  className={`${pair.info?.imageUrl ? "hidden" : ""} absolute inset-0 scale-95 rounded-xl bg-gradient-to-br from-purple-400/80 to-cyan-400/80 blur-md opacity-90`}
                 />
                 <div
-                  className={`${pair.image_url ? "hidden" : ""} relative z-10 flex h-full w-full items-center justify-center rounded-xl bg-gradient-to-br from-purple-400/90 to-cyan-400/90 shadow-inner border border-white/20`}
+                  className={`${pair.info?.imageUrl ? "hidden" : ""} relative z-10 flex h-full w-full items-center justify-center rounded-xl bg-gradient-to-br from-purple-400/90 to-cyan-400/90 shadow-inner border border-white/20`}
                 >
-                  <BarChart3 className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+                  <BarChart3 className="h-4 w-4 sm:h-8 sm:w-8 text-white" />
                 </div>
               </div>
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
                   <CardTitle className="text-lg sm:text-2xl bg-gradient-to-r from-purple-300 to-cyan-300 bg-clip-text text-transparent">
-                    {pair.name}
+                    {pair.baseToken.symbol}/{pair.quoteToken.symbol}
                   </CardTitle>
-                  {pair.boosts && pair.boosts > 0 && (
+                  {pair.boosts && pair.boosts.active > 0 && (
                     <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0 text-xs">
-                      <Star className="h-3 w-3 mr-1" />
-                      Boosted
+                      <Zap className="h-3 w-3 mr-1" />
+                      {pair.boosts.active} Boost{pair.boosts.active > 1 ? "s" : ""}
                     </Badge>
                   )}
                 </div>
@@ -246,7 +259,7 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                   {pair.pairCreatedAt && (
                     <Badge variant="outline" className="bg-green-500/20 text-green-300 border-green-400/30 text-xs">
                       <Calendar className="h-3 w-3 mr-1" />
-                      <span className="hidden sm:inline">{pair.pairCreatedAt}</span>
+                      <span className="hidden sm:inline">{formatDate(pair.pairCreatedAt)}</span>
                       <span className="sm:hidden">Created</span>
                     </Badge>
                   )}
@@ -255,14 +268,19 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                 {/* Price and Change */}
                 <div className="flex items-center gap-2 sm:gap-4">
                   <div>
-                    <div className="text-xl sm:text-3xl font-bold text-white">{pair.price}</div>
+                    <div className="text-xl sm:text-3xl font-bold text-white">
+                      {pair.priceUsd ? `$${Number(pair.priceUsd).toFixed(6)}` : pair.priceNative}
+                    </div>
                     <div className="text-xs sm:text-sm text-gray-300">
-                      ≈ {pair.priceNative} {pair.quoteToken.symbol}
+                      {pair.priceNative} {pair.quoteToken.symbol}
                     </div>
                   </div>
-                  <div className={`flex items-center gap-1 sm:gap-2 ${getTrendColor(pair.price_trend)}`}>
-                    {getTrendIcon(pair.price_trend)}
-                    <span className="text-base sm:text-xl font-semibold">{pair.price_change_24h}</span>
+                  <div className={`flex items-center gap-1 sm:gap-2 ${getTrendColor(pair.priceChange.h24)}`}>
+                    {getTrendIcon(pair.priceChange.h24)}
+                    <span className="text-base sm:text-xl font-semibold">
+                      {pair.priceChange.h24 > 0 ? "+" : ""}
+                      {pair.priceChange.h24.toFixed(2)}%
+                    </span>
                   </div>
                 </div>
               </div>
@@ -282,10 +300,10 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => copyToClipboard(pair.pairAddress, pair.id)}
+                  onClick={() => copyToClipboard(pair.pairAddress, pair.pairAddress)}
                   className="bg-white/10 hover:bg-white/20 border-white/30 text-xs sm:text-sm text-white"
                 >
-                  {copied === pair.id ? (
+                  {copied === pair.pairAddress ? (
                     <Check className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 text-green-400" />
                   ) : (
                     <Copy className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
@@ -330,23 +348,31 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
               <TabsContent value="overview" className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
                 {/* Key Metrics Grid */}
                 <div className="grid grid-cols-2 gap-2 sm:gap-4">
-                  <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 sm:p-4 relative group/metric">
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover/metric:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                    <div className="flex items-center gap-2 mb-2 relative z-10">
-                      <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 text-green-400" />
-                      <span className="text-xs sm:text-sm font-medium text-gray-300">Market Cap</span>
+                  {pair.marketCap && (
+                    <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 sm:p-4 relative group/metric">
+                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover/metric:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                      <div className="flex items-center gap-2 mb-2 relative z-10">
+                        <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 text-green-400" />
+                        <span className="text-xs sm:text-sm font-medium text-gray-300">Market Cap</span>
+                      </div>
+                      <div className="text-sm sm:text-lg font-bold text-white relative z-10">
+                        {formatNumber(pair.marketCap)}
+                      </div>
                     </div>
-                    <div className="text-sm sm:text-lg font-bold text-white relative z-10">{pair.market_cap}</div>
-                  </div>
+                  )}
 
-                  <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 sm:p-4 relative group/metric">
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover/metric:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                    <div className="flex items-center gap-2 mb-2 relative z-10">
-                      <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 text-blue-400" />
-                      <span className="text-xs sm:text-sm font-medium text-gray-300">FDV</span>
+                  {pair.fdv && (
+                    <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 sm:p-4 relative group/metric">
+                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover/metric:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                      <div className="flex items-center gap-2 mb-2 relative z-10">
+                        <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 text-blue-400" />
+                        <span className="text-xs sm:text-sm font-medium text-gray-300">FDV</span>
+                      </div>
+                      <div className="text-sm sm:text-lg font-bold text-white relative z-10">
+                        {formatNumber(pair.fdv)}
+                      </div>
                     </div>
-                    <div className="text-sm sm:text-lg font-bold text-white relative z-10">{pair.fdv}</div>
-                  </div>
+                  )}
 
                   <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 sm:p-4 relative group/metric">
                     <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover/metric:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -354,17 +380,23 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                       <Activity className="h-3 w-3 sm:h-4 sm:w-4 text-purple-400" />
                       <span className="text-xs sm:text-sm font-medium text-gray-300">Volume 24h</span>
                     </div>
-                    <div className="text-sm sm:text-lg font-bold text-white relative z-10">{pair.volume_24h}</div>
+                    <div className="text-sm sm:text-lg font-bold text-white relative z-10">
+                      ${formatVolume(pair.volume.h24)}
+                    </div>
                   </div>
 
-                  <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 sm:p-4 relative group/metric">
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover/metric:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                    <div className="flex items-center gap-2 mb-2 relative z-10">
-                      <Users className="h-3 w-3 sm:h-4 sm:w-4 text-orange-400" />
-                      <span className="text-xs sm:text-sm font-medium text-gray-300">Liquidity</span>
+                  {pair.liquidity?.usd && (
+                    <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 sm:p-4 relative group/metric">
+                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover/metric:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                      <div className="flex items-center gap-2 mb-2 relative z-10">
+                        <Users className="h-3 w-3 sm:h-4 sm:w-4 text-orange-400" />
+                        <span className="text-xs sm:text-sm font-medium text-gray-300">Liquidity</span>
+                      </div>
+                      <div className="text-sm sm:text-lg font-bold text-white relative z-10">
+                        {formatNumber(pair.liquidity.usd)}
+                      </div>
                     </div>
-                    <div className="text-sm sm:text-lg font-bold text-white relative z-10">{pair.liquidity}</div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Price Changes */}
@@ -376,30 +408,30 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
                     <div className="text-center">
                       <div className="text-xs text-gray-300 mb-1">5 Min</div>
-                      <div className={`text-sm sm:text-lg font-semibold ${getPriceChangeColor(pair.priceChanges.m5)}`}>
-                        {pair.priceChanges.m5 > 0 ? "+" : ""}
-                        {pair.priceChanges.m5.toFixed(2)}%
+                      <div className={`text-sm sm:text-lg font-semibold ${getTrendColor(pair.priceChange.m5 || 0)}`}>
+                        {(pair.priceChange.m5 || 0) > 0 ? "+" : ""}
+                        {(pair.priceChange.m5 || 0).toFixed(2)}%
                       </div>
                     </div>
                     <div className="text-center">
                       <div className="text-xs text-gray-300 mb-1">1 Hour</div>
-                      <div className={`text-sm sm:text-lg font-semibold ${getPriceChangeColor(pair.priceChanges.h1)}`}>
-                        {pair.priceChanges.h1 > 0 ? "+" : ""}
-                        {pair.priceChanges.h1.toFixed(2)}%
+                      <div className={`text-sm sm:text-lg font-semibold ${getTrendColor(pair.priceChange.h1 || 0)}`}>
+                        {(pair.priceChange.h1 || 0) > 0 ? "+" : ""}
+                        {(pair.priceChange.h1 || 0).toFixed(2)}%
                       </div>
                     </div>
                     <div className="text-center">
                       <div className="text-xs text-gray-300 mb-1">6 Hours</div>
-                      <div className={`text-sm sm:text-lg font-semibold ${getPriceChangeColor(pair.priceChanges.h6)}`}>
-                        {pair.priceChanges.h6 > 0 ? "+" : ""}
-                        {pair.priceChanges.h6.toFixed(2)}%
+                      <div className={`text-sm sm:text-lg font-semibold ${getTrendColor(pair.priceChange.h6 || 0)}`}>
+                        {(pair.priceChange.h6 || 0) > 0 ? "+" : ""}
+                        {(pair.priceChange.h6 || 0).toFixed(2)}%
                       </div>
                     </div>
                     <div className="text-center">
                       <div className="text-xs text-gray-300 mb-1">24 Hours</div>
-                      <div className={`text-sm sm:text-lg font-semibold ${getPriceChangeColor(pair.priceChanges.h24)}`}>
-                        {pair.priceChanges.h24 > 0 ? "+" : ""}
-                        {pair.priceChanges.h24.toFixed(2)}%
+                      <div className={`text-sm sm:text-lg font-semibold ${getTrendColor(pair.priceChange.h24 || 0)}`}>
+                        {(pair.priceChange.h24 || 0) > 0 ? "+" : ""}
+                        {(pair.priceChange.h24 || 0).toFixed(2)}%
                       </div>
                     </div>
                   </div>
@@ -417,19 +449,21 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
                     <div className="text-center">
                       <div className="text-xs text-gray-300 mb-1">5 Min</div>
-                      <div className="text-sm sm:text-lg font-semibold text-white">{pair.volume_5m}</div>
+                      <div className="text-sm sm:text-lg font-semibold text-white">${formatVolume(pair.volume.m5)}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-xs text-gray-300 mb-1">1 Hour</div>
-                      <div className="text-sm sm:text-lg font-semibold text-white">{pair.volume_1h}</div>
+                      <div className="text-sm sm:text-lg font-semibold text-white">${formatVolume(pair.volume.h1)}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-xs text-gray-300 mb-1">6 Hours</div>
-                      <div className="text-sm sm:text-lg font-semibold text-white">{pair.volume_6h}</div>
+                      <div className="text-sm sm:text-lg font-semibold text-white">${formatVolume(pair.volume.h6)}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-xs text-gray-300 mb-1">24 Hours</div>
-                      <div className="text-sm sm:text-lg font-semibold text-white">{pair.volume_24h}</div>
+                      <div className="text-sm sm:text-lg font-semibold text-white">
+                        ${formatVolume(pair.volume.h24)}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -442,17 +476,18 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                   </h3>
                   <div className="space-y-3 sm:space-y-4">
                     {[
-                      { label: "24 Hours", data: pair.transactions.h24 },
-                      { label: "6 Hours", data: pair.transactions.h6 },
-                      { label: "1 Hour", data: pair.transactions.h1 },
-                      { label: "5 Minutes", data: pair.transactions.m5 },
+                      { label: "24 Hours", data: pair.txns.h24 },
+                      { label: "6 Hours", data: pair.txns.h6 },
+                      { label: "1 Hour", data: pair.txns.h1 },
+                      { label: "5 Minutes", data: pair.txns.m5 },
                     ].map((period) => {
                       const buyPressure = getBuyPressure(period.data.buys, period.data.sells)
+                      const total = period.data.buys + period.data.sells
                       return (
                         <div key={period.label} className="space-y-2">
                           <div className="flex justify-between items-center">
                             <span className="text-xs sm:text-sm font-medium text-gray-300">{period.label}</span>
-                            <span className="text-xs sm:text-sm text-gray-300">{period.data.total} txns</span>
+                            <span className="text-xs sm:text-sm text-gray-300">{total} txns</span>
                           </div>
                           <div className="flex gap-2 text-xs sm:text-sm">
                             <span className="text-green-400">Buys: {period.data.buys}</span>
@@ -474,33 +509,43 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
 
               {/* Liquidity Tab */}
               <TabsContent value="liquidity" className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 sm:p-4">
-                  <h3 className="text-sm sm:text-lg font-semibold mb-3 flex items-center gap-2 text-white">
-                    <Users className="h-4 w-4 sm:h-5 sm:w-5 text-orange-400" />
-                    Liquidity Pool Details
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-                    <div className="text-center">
-                      <div className="text-xs sm:text-sm text-gray-300 mb-1">Total Liquidity</div>
-                      <div className="text-lg sm:text-xl font-bold text-white">{pair.liquidity}</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xs sm:text-sm text-gray-300 mb-1">{pair.baseToken.symbol} Reserve</div>
-                      <div className="text-lg sm:text-xl font-bold text-white">{pair.liquidityBase}</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xs sm:text-sm text-gray-300 mb-1">{pair.quoteToken.symbol} Reserve</div>
-                      <div className="text-lg sm:text-xl font-bold text-white">{pair.liquidityQuote}</div>
+                {pair.liquidity && (
+                  <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 sm:p-4">
+                    <h3 className="text-sm sm:text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+                      <Users className="h-4 w-4 sm:h-5 sm:w-5 text-orange-400" />
+                      Liquidity Pool Details
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                      {pair.liquidity.usd && (
+                        <div className="text-center">
+                          <div className="text-xs sm:text-sm text-gray-300 mb-1">Total Liquidity</div>
+                          <div className="text-lg sm:text-xl font-bold text-white">
+                            {formatNumber(pair.liquidity.usd)}
+                          </div>
+                        </div>
+                      )}
+                      <div className="text-center">
+                        <div className="text-xs sm:text-sm text-gray-300 mb-1">{pair.baseToken.symbol} Reserve</div>
+                        <div className="text-lg sm:text-xl font-bold text-white">
+                          {formatVolume(pair.liquidity.base)}
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs sm:text-sm text-gray-300 mb-1">{pair.quoteToken.symbol} Reserve</div>
+                        <div className="text-lg sm:text-xl font-bold text-white">
+                          {formatVolume(pair.liquidity.quote)}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 {/* Token Addresses */}
                 <div className="grid grid-cols-1 gap-3 sm:gap-4">
                   <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 sm:p-4">
                     <h4 className="font-semibold mb-2 flex items-center gap-2">
                       <button
-                        onClick={() => handleTokenClick(pair.baseToken.symbol, pair.chainId)}
+                        onClick={() => onTokenClick?.(pair.baseToken.symbol, pair.chainId)}
                         className="hover:text-purple-300 hover:underline transition-colors text-sm sm:text-base text-white"
                       >
                         {pair.baseToken.name} ({pair.baseToken.symbol})
@@ -513,10 +558,10 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => copyToClipboard(pair.baseToken.address, `base-${pair.id}`)}
+                        onClick={() => copyToClipboard(pair.baseToken.address, `base-${pair.pairAddress}`)}
                         className="h-6 w-6 p-0 ml-2 flex-shrink-0 bg-white/10 hover:bg-white/20 border border-white/20"
                       >
-                        {copied === `base-${pair.id}` ? (
+                        {copied === `base-${pair.pairAddress}` ? (
                           <Check className="h-3 w-3 text-green-400" />
                         ) : (
                           <Copy className="h-3 w-3 text-white" />
@@ -528,7 +573,7 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                   <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 sm:p-4">
                     <h4 className="font-semibold mb-2 flex items-center gap-2">
                       <button
-                        onClick={() => handleTokenClick(pair.quoteToken.symbol, pair.chainId)}
+                        onClick={() => onTokenClick?.(pair.quoteToken.symbol, pair.chainId)}
                         className="hover:text-purple-300 hover:underline transition-colors text-sm sm:text-base text-white"
                       >
                         {pair.quoteToken.name} ({pair.quoteToken.symbol})
@@ -541,10 +586,10 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => copyToClipboard(pair.quoteToken.address, `quote-${pair.id}`)}
+                        onClick={() => copyToClipboard(pair.quoteToken.address, `quote-${pair.pairAddress}`)}
                         className="h-6 w-6 p-0 ml-2 flex-shrink-0 bg-white/10 hover:bg-white/20 border border-white/20"
                       >
-                        {copied === `quote-${pair.id}` ? (
+                        {copied === `quote-${pair.pairAddress}` ? (
                           <Check className="h-3 w-3 text-green-400" />
                         ) : (
                           <Copy className="h-3 w-3 text-white" />
@@ -558,18 +603,18 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
               {/* Info Tab */}
               <TabsContent value="info" className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
                 {/* Links */}
-                {(pair.websites || pair.socials) && (
+                {(pair.info?.websites || pair.info?.socials) && (
                   <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 sm:p-4">
                     <h3 className="text-sm sm:text-lg font-semibold mb-3 flex items-center gap-2 text-white">
                       <Info className="h-4 w-4 sm:h-5 sm:w-5 text-blue-400" />
                       Project Links
                     </h3>
                     <div className="space-y-3">
-                      {pair.websites && (
+                      {pair.info?.websites && (
                         <div>
                           <h4 className="text-xs sm:text-sm font-medium text-gray-300 mb-2">Websites</h4>
                           <div className="flex flex-wrap gap-2">
-                            {pair.websites.map((website, idx) => (
+                            {pair.info.websites.map((website, idx) => (
                               <Button
                                 key={idx}
                                 variant="outline"
@@ -578,27 +623,29 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                                 className="bg-white/10 hover:bg-white/20 border-white/30 text-xs text-white"
                               >
                                 <Globe className="h-3 w-3 mr-2" />
-                                {website.label}
+                                Website
                               </Button>
                             ))}
                           </div>
                         </div>
                       )}
 
-                      {pair.socials && (
+                      {pair.info?.socials && (
                         <div>
                           <h4 className="text-xs sm:text-sm font-medium text-gray-300 mb-2">Social Media</h4>
                           <div className="flex flex-wrap gap-2">
-                            {pair.socials.map((social, idx) => (
+                            {pair.info.socials.map((social, idx) => (
                               <Button
                                 key={idx}
                                 variant="outline"
                                 size="sm"
-                                onClick={() => window.open(social.url, "_blank")}
+                                onClick={() => window.open(`https://${social.platform}.com/${social.handle}`, "_blank")}
                                 className="bg-white/10 hover:bg-white/20 border-white/30 text-xs text-white"
                               >
-                                {getSocialIcon(social.type)}
-                                <span className="ml-2 capitalize">{social.type}</span>
+                                {getSocialIcon(social.platform)}
+                                <span className="ml-2 capitalize">
+                                  {social.platform}: @{social.handle}
+                                </span>
                               </Button>
                             ))}
                           </div>
@@ -622,10 +669,10 @@ export function DexPairsCard({ pairs, onTokenClick }: DexPairsCardProps) {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => copyToClipboard(pair.pairAddress, `contract-${pair.id}`)}
+                        onClick={() => copyToClipboard(pair.pairAddress, `contract-${pair.pairAddress}`)}
                         className="bg-white/10 hover:bg-white/20 border-white/30 h-8 w-8 p-0"
                       >
-                        {copied === `contract-${pair.id}` ? (
+                        {copied === `contract-${pair.pairAddress}` ? (
                           <Check className="h-3 w-3 text-green-400" />
                         ) : (
                           <Copy className="h-3 w-3 text-white" />

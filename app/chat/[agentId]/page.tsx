@@ -19,7 +19,7 @@ interface Agent {
   capabilities?: string[]
 }
 
-// Neon Button Component
+// Updated Neon Button Component for Dark Theme
 function NeonButton({
   children,
   onClick,
@@ -38,24 +38,30 @@ function NeonButton({
   title?: string
 }) {
   const baseClasses =
-    "relative inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200"
+    "relative inline-flex items-center justify-center rounded-lg font-medium transition-all duration-300 group"
+
   const sizeClasses = {
     sm: "px-3 py-1.5 text-sm",
     default: "px-4 py-2 text-sm",
     lg: "px-6 py-3 text-base",
   }
+
   const variantClasses = {
     default:
-      "border border-purple-500 bg-black text-white shadow-inner hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(0,255,255,0.4)]",
-    ghost: "border border-transparent bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 hover:border-white/30",
-    outline: "border border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 hover:border-purple-400",
+      "bg-gradient-to-r from-purple-500/90 to-cyan-500/90 text-white border border-white/20 shadow-lg hover:from-purple-400 hover:to-cyan-400 hover:scale-105 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)]",
+    ghost:
+      "bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/20 text-white hover:from-white/15 hover:to-white/8 hover:border-white/30",
+    outline:
+      "bg-gradient-to-br from-white/8 to-white/3 backdrop-blur-md border border-white/30 text-white hover:from-white/12 hover:to-white/6 hover:border-purple-400/50",
   }
 
   return (
     <Button
       onClick={onClick}
       disabled={disabled}
-      className={`${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${className}`}
+      className={`${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${
+        disabled ? "opacity-50 cursor-not-allowed" : ""
+      } ${className}`}
       {...props}
     >
       {children}
@@ -166,13 +172,11 @@ export default function ChatPage() {
 
   if (!agent) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
-        <div className="text-center rounded-2xl border border-white/35 bg-white/18 backdrop-blur-md p-8 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_6px_22px_rgba(0,0,0,0.14)]">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
-            Agent not found
-          </h1>
-          <NeonButton onClick={() => router.push("/")} className="mt-4">
-            <ArrowLeft className="mr-2 text-black h-4 w-4" />
+      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900">
+        <div className="text-center rounded-2xl border border-white/10 bg-gradient-to-br from-white/8 via-white/5 to-white/3 backdrop-blur-xl p-8 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08),0_8px_32px_rgba(0,0,0,0.4)]">
+          <h1 className="text-2xl font-bold text-white mb-4">Agent not found</h1>
+          <NeonButton onClick={() => router.push("/")} variant="default">
+            <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Agents
           </NeonButton>
         </div>
@@ -181,42 +185,43 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex md:h-[98vh] h-screen flex-col bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="flex  h-screen flex-col bg-gradient-to-br from-gray-900 via-black to-gray-900">
       {/* Header */}
-      <div className="border-b border-white/35 bg-white/18 backdrop-blur-md px-4 py-3 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1),0_1px_4px_rgba(0,0,0,0.14)]">
+      <div className="border-b border-white/10 bg-gradient-to-r from-white/8 via-white/5 to-white/3 backdrop-blur-xl px-4 py-3 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.3)]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <NeonButton variant="ghost" size="sm" onClick={() => router.push("/")} className="md:hidden">
               <ArrowLeft className="h-4 w-4" />
             </NeonButton>
-
             <div className="relative h-10 w-10">
-              <div className="absolute inset-0 scale-95 rounded-xl bg-gradient-to-br from-[#c6a9ff] to-[#ffcf9f] blur-md opacity-90" />
-              <div className="relative z-10 flex h-full w-full items-center justify-center rounded-xl bg-gradient-to-br from-[#c6a9ff] to-[#ffcf9f] shadow-inner">
+              <div className="absolute inset-0 scale-95 rounded-xl bg-gradient-to-br from-purple-400/80 to-cyan-400/80 blur-md opacity-90" />
+              <div className="relative z-10 flex h-full w-full items-center justify-center rounded-xl bg-gradient-to-br from-purple-400/90 to-cyan-400/90 shadow-inner border border-white/20">
                 <Bot className="h-5 w-5 text-white" />
               </div>
             </div>
-
             <div>
-              <h1 className="font-semibold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
-                {agent.name}
-              </h1>
+              <h1 className="font-semibold text-white">{agent.name}</h1>
               <div className="flex items-center gap-2">
                 <Badge
                   variant={agent.status === "active" ? "default" : agent.status === "idle" ? "secondary" : "outline"}
-                  className="text-xs bg-black/80 backdrop-blur-sm border-white/30"
+                  className={`text-xs backdrop-blur-md border ${
+                    agent.status === "active"
+                      ? "bg-green-500/20 text-green-400 border-green-500/30"
+                      : agent.status === "idle"
+                        ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+                        : "bg-blue-500/20 text-blue-400 border-blue-500/30"
+                  }`}
                 >
                   {agent.status}
                 </Badge>
-                <span className="text-xs text-gray-600">{agent.type}</span>
+                <span className="text-xs text-gray-300">{agent.type}</span>
               </div>
             </div>
           </div>
-
-          <div className="flex text-black items-center gap-2">
-            <NeonButton variant="ghost" size="sm" onClick={() => router.push("/agents")} className="hidden md:flex">
-              <ArrowLeft className="mr-2 text-black h-4 w-4" />
-              <p className="text-black">Back to Agents</p>
+          <div className="flex items-center gap-2">
+            <NeonButton variant="ghost" size="sm" onClick={() => router.push("/")} className="hidden md:flex">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              <span>Back to Agents</span>
             </NeonButton>
             <NeonButton variant="ghost" size="sm">
               <MoreVertical className="h-4 w-4" />
@@ -230,12 +235,12 @@ export default function ChatPage() {
         <div className="mx-auto max-w-4xl space-y-4">
           {/* Connection Error */}
           {connectionError && (
-            <div className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700">
+            <div className="rounded-2xl p-4 bg-gradient-to-br from-red-500/10 to-red-600/10 backdrop-blur-md border border-red-500/30 text-red-300">
               <div className="flex items-center gap-2 mb-2">
                 <AlertCircle className="h-4 w-4" />
                 <span className="font-medium">Connection Error</span>
               </div>
-              <p className="text-sm mb-3">{connectionError}</p>
+              <p className="text-sm mb-3 text-red-200">{connectionError}</p>
               <NeonButton variant="outline" size="sm" onClick={handleRetry}>
                 Try Again
               </NeonButton>
@@ -244,12 +249,12 @@ export default function ChatPage() {
 
           {/* API Error */}
           {error && (
-            <div className="rounded-2xl p-4 bg-red-100/20 backdrop-blur-md border border-red-300/50 text-red-700">
+            <div className="rounded-2xl p-4 bg-gradient-to-br from-red-500/10 to-red-600/10 backdrop-blur-md border border-red-500/30 text-red-300">
               <div className="flex items-center gap-2 mb-2">
                 <AlertCircle className="h-4 w-4" />
                 <span className="font-medium">API Error</span>
               </div>
-              <p className="text-sm mb-3">{error.message}</p>
+              <p className="text-sm mb-3 text-red-200">{error.message}</p>
               <NeonButton variant="outline" size="sm" onClick={handleRetry}>
                 Retry Request
               </NeonButton>
@@ -264,26 +269,25 @@ export default function ChatPage() {
               onPairClick={handlePairClick}
             />
           ))}
-
           <div ref={messagesEndRef} />
         </div>
       </div>
 
       {/* Input */}
-      <div className="border-t border-white/35 bg-white/18 backdrop-blur-md p-4 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4),0_1px_4px_rgba(0,0,0,0.14)]">
+      <div className="border-t border-white/10 bg-gradient-to-r from-white/8 via-white/5 to-white/3 backdrop-blur-xl p-4 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08),0_-4px_16px_rgba(0,0,0,0.3)]">
         <div className="mx-auto max-w-4xl">
-          <form onSubmit={handleSubmit} className="flex md:gap-3">
-            <NeonButton variant="outline" size="sm" className="flex-shrink-0" >
+          <form onSubmit={handleSubmit} className="flex gap-3">
+            <NeonButton variant="outline" size="sm" className="flex-shrink-0">
               <Paperclip className="h-4 w-4" />
             </NeonButton>
             <div className="flex-1 flex items-center gap-3">
-             <Input
-                  value={input}
-                  onChange={handleInputChange}
-                  placeholder={`Ask me anything about crypto, tokens, or DeFi...`}
-                  className="flex-1 h-12 sm:pl-4 sm:pr-12 bg-white/10 backdrop-blur-md border-2 border-gray/20 rounded-2xl text-gray-900 placeholder:text-gray-400 focus:border-purple-400/60 focus:ring-4 focus:ring-purple-400/10 focus:bg-white/15 hover:bg-white/12 hover:border-gray/50 transition-all duration-300 shadow-lg shadow-black/5 text-sm font-medium"
-                  disabled={isLoading}
-                />
+              <Input
+                value={input}
+                onChange={handleInputChange}
+                placeholder="Ask me anything about crypto, tokens, or DeFi..."
+                className="flex-1 h-12 px-4 bg-gradient-to-r text-black from-white/10 to-white/5 backdrop-blur-md border border-white/20 rounded-2xl  placeholder:text-gray-400 focus:border-purple-400/60 focus:ring-4 focus:ring-purple-400/20 focus:from-white/15 focus:to-white/8 hover:from-white/12 hover:to-white/6 hover:border-white/30 transition-all duration-300 shadow-lg text-sm font-medium"
+                disabled={isLoading}
+              />
               <NeonButton  disabled={!input.trim() || isLoading} className="flex-shrink-0">
                 <Send className="h-4 w-4" />
               </NeonButton>
@@ -292,12 +296,12 @@ export default function ChatPage() {
 
           {/* Agent info */}
           <div className="mt-3 flex flex-wrap gap-2">
-            <span className="text-xs text-gray-600 font-medium">APIs:</span>
+            <span className="text-xs text-gray-300 font-medium">APIs:</span>
             {agent.tools.slice(0, 4).map((tool) => (
               <Badge
                 key={tool}
                 variant="outline"
-                className="text-xs bg-purple-50/20 text-purple-700 border-purple-300/50 backdrop-blur-sm"
+                className="text-xs bg-gradient-to-r from-purple-500/10 to-cyan-500/10 text-purple-300 border-purple-400/30 backdrop-blur-sm"
               >
                 {tool}
               </Badge>

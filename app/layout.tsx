@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
-import {Space_Grotesk} from 'next/font/google'
+import {DM_Sans} from 'next/font/google'
 import './globals.css'
 import { AppSidebar } from '@/components/app-sidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import WalletProvider from './wallet-provider';
+import { Head } from 'react-day-picker';
+import Header from '@/components/header';
 
 export const metadata: Metadata = {
   title: 'MindCP Neural Dashboard',
@@ -18,7 +20,7 @@ export const metadata: Metadata = {
   description: 'Manage your AI agents and neural networks with MindCP',
 }
 
-const space = Space_Grotesk({
+const space = DM_Sans({
   variable: "--font-dm-sans",
   subsets: ["latin"],
 });
@@ -34,7 +36,7 @@ export default function RootLayout({
   return (
     <html lang="en">
 
-      <body className={`${space.className}`}>
+      <body className={`${space.className} bg-[#1b1a1a] overflow-auto text-white`}>
          <link
           rel="icon"
           href="/f5.png"
@@ -43,7 +45,8 @@ export default function RootLayout({
         <WalletProvider>
         <SidebarProvider>
             <AppSidebar />
-            <SidebarInset>
+            <SidebarInset className="overflow-auto">
+              <Header />
         {children}
        
         </SidebarInset>
