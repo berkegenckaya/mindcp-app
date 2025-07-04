@@ -12,6 +12,7 @@ import { TokenInfoCompact } from "./token-info-compact"
 import { WalletAnalysisCard } from "./wallet-analysis-card"
 import { DexPairsCard } from "./dex-pair-card"
 import { DexScreenerPairCard } from "./dex-screener-pair-card"
+import { CryptoNewsCard } from "./crypto-news-card"
 
 interface DexScreenerPair {
   chainId: string
@@ -840,6 +841,94 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                 <span className="font-medium text-sm">Parse Error</span>
               </div>
               <p className="text-xs sm:text-sm mb-2 text-red-200">Failed to parse wallet analysis response</p>
+              <details>
+                <summary className="text-xs cursor-pointer hover:text-red-200">Raw Response</summary>
+                <pre className="text-xs mt-1 p-2 bg-red-500/20 rounded overflow-x-auto">
+                  {JSON.stringify(toolInvocation.result, null, 2)}
+                </pre>
+              </details>
+            </div>
+          )
+        }
+
+      case "get_crypto_news":
+      case "get_trending_crypto_news":
+      case "get_crypto_news_by_symbol":
+      case "get_bullish_crypto_news":
+      case "get_bearish_crypto_news":
+        try {
+          const result = toolInvocation.result
+          let newsData: any = null
+          let errorInfo: {
+            error: string
+            suggestion?: string
+            details?: string
+          } | null = null
+
+          // Handle different result formats
+          if (typeof result === "string") {
+            const parsed = JSON.parse(result)
+            if (parsed.error || !parsed.success) {
+              errorInfo = { error: parsed.error || "Failed to fetch crypto news" }
+            } else {
+              newsData = parsed.news_data
+            }
+          } else if (result && typeof result === "object") {
+            if (result.error || !result.success) {
+              errorInfo = { error: result.error || "Failed to fetch crypto news" }
+            } else {
+              newsData = result.news_data
+            }
+          }
+
+          // Show error state
+          if (errorInfo) {
+            return (
+              <div
+                key={toolIndex}
+                className="rounded-2xl p-3 sm:p-4 bg-gradient-to-br from-red-500/10 to-red-600/10 backdrop-blur-md border border-red-500/30 text-red-300 w-full"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                  <span className="font-medium text-sm">Crypto News Error</span>
+                </div>
+                <p className="text-xs sm:text-sm mb-2 text-red-200">{errorInfo.error}</p>
+              </div>
+            )
+          }
+
+          // Show news data if available
+          if (newsData && newsData.articles && Array.isArray(newsData.articles)) {
+            return <CryptoNewsCard key={toolIndex} newsData={newsData} />
+          }
+
+          // Fallback: No data available
+          return (
+            <div
+              key={toolIndex}
+              className="rounded-2xl p-3 sm:p-4 bg-gradient-to-br from-orange-500/10 to-orange-600/10 backdrop-blur-md border border-orange-500/30 text-orange-300 w-full"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span className="font-medium text-sm">No Crypto News Available</span>
+              </div>
+              <p className="text-xs sm:text-sm text-orange-200">
+                Unable to retrieve crypto news at the moment. Please try again later.
+              </p>
+            </div>
+          )
+        } catch (error) {
+          console.error("Error parsing crypto news data:", error)
+          return (
+            <div
+              key={toolIndex}
+              className="rounded-2xl p-3 sm:p-4 bg-gradient-to-br from-red-500/10 to-red-600/10 backdrop-blur-md border border-red-500/30 text-red-300 w-full"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span className="font-medium text-sm">Crypto News Parse Error</span>
+              </div>
+              <p className="text-xs sm:text-sm mb-2 text-red-200">Failed to parse crypto news response</p>
               <details>
                 <summary className="text-xs cursor-pointer hover:text-red-200">Raw Response</summary>
                 <pre className="text-xs mt-1 p-2 bg-red-500/20 rounded overflow-x-auto">

@@ -3,6 +3,20 @@ import { getDexPairInfoTool, searchDexPairsTool, getTokenPairsTool } from "@/app
 import { getWalletAnalysisTool } from "@/app/tools/cielo"
 import { getTokenPools } from "@/app/tools/gecko-terminal/tool"
 import { dallEImageGeneratorTool } from "@/app/tools/image-generator/tool"
+import { 
+  getCryptoNewsTool, 
+  getTrendingCryptoNewsTool, 
+  getCryptoNewsBySymbolTool, 
+  getBullishCryptoNewsTool, 
+  getBearishCryptoNewsTool 
+} from "@/app/tools/crypto-news"
+import {
+  callAgentTool,
+  getAvailableAgentsTool,
+  getContentFromContentCreatorTool,
+  getCryptoAnalysisFromAnalystTool,
+  getCodeHelpFromCodeAssistantTool,
+} from "@/app/tools/inter-agent"
 
 export interface Agent {
   id: number
@@ -107,18 +121,143 @@ IMPORTANT: Always return valid JSON from tools. If there's an error, return a pr
   },
   {
     id: 2,
-    name: "Creative Assistant",
-    description: "Helps you brainstorm ideas, write content, and generate creative assets.",
-    type: "creative",
-    status: "idle",
-    tools: ["openai-gpt-4o-mini", "dall-e-3"],
-    capabilities: ["content-creation", "image-generation"],
+    name: "Content Creator",
+    description: "Expert content creator for social media, blogs, marketing copy, and creative writing with crypto news integration.",
+    type: "content-creation",
+    status: "active",
+    tools: ["openai-gpt-4o-mini", "dall-e-3", "crypto-news-api"],
+    capabilities: ["content-creation", "copywriting", "social-media", "blog-writing", "marketing", "creative-writing", "crypto-news"],
     createdAt: "2025-01-21",
-    systemPrompt: `You are a creative AI assistant. Help users brainstorm, write, and generate creative content.`,
-    toolSet: {},
-    welcomeMessage: `Hi! I'm your creative assistant. I can help you brainstorm ideas, write content, or generate creative assets. Just tell me what you need!`,
+    systemPrompt: `You are an expert Content Creator AI assistant specializing in creating high-quality, engaging content across multiple platforms and formats, with access to real-time cryptocurrency news.
+
+Your expertise includes:
+
+📝 **Content Types:**
+- Social media posts (Instagram, Twitter, LinkedIn, TikTok, Facebook)
+- Blog articles and SEO-optimized content
+- Marketing copy and sales pages
+- Email newsletters and campaigns
+- Product descriptions
+- Website copy and landing pages
+- Creative writing and storytelling
+- Video scripts and captions
+- Podcast outlines and show notes
+- Crypto news articles and analysis
+
+🎯 **Content Strategy:**
+- Target audience analysis and persona development
+- Content calendar planning
+- Trend research and topic ideation
+- Brand voice and tone development
+- Engagement optimization
+- Call-to-action creation
+- Content repurposing strategies
+
+✨ **Creative Services:**
+- Headline and title generation
+- Hook creation for social media
+- Storytelling and narrative development
+- Content formatting and structure
+- Hashtag research and optimization
+- Content series planning
+- Visual content descriptions
+
+📊 **Content Optimization:**
+- SEO keyword integration
+- Platform-specific optimization
+- A/B testing suggestions
+- Performance improvement recommendations
+- Content length optimization
+- Readability enhancement
+
+🚀 **Crypto News Integration:**
+You have access to real-time cryptocurrency news through CryptoPanic API:
+- get_crypto_news - Get crypto news with various filters
+- get_trending_crypto_news - Get trending/hot crypto news
+- get_crypto_news_by_symbol - Get news for specific coins (BTC, ETH, etc.)
+- get_bullish_crypto_news - Get positive sentiment crypto news
+- get_bearish_crypto_news - Get negative sentiment crypto news
+
+Use these tools to:
+- Create timely crypto content based on latest news
+- Write news summaries and analysis
+- Generate social media posts about crypto trends
+- Create newsletters with crypto market updates
+- Develop content around specific cryptocurrencies
+
+When creating content, always:
+- Ask about target audience and platform
+- Consider brand voice and goals
+- Provide multiple variations when helpful
+- Suggest visual elements or image descriptions
+- Optimize for engagement and conversion
+- Follow platform best practices
+- Use current crypto news when relevant
+
+For crypto-related content requests, use the news tools to get the latest information before creating content.
+
+IMPORTANT: Do not use emojis and do not use hashtags in any content creation, especially for tweets and social media posts.
+
+Be creative, engaging, and results-focused in all your content creation!`,
+    toolSet: {
+     
+      get_crypto_news: getCryptoNewsTool,
+      get_trending_crypto_news: getTrendingCryptoNewsTool,
+      get_crypto_news_by_symbol: getCryptoNewsBySymbolTool,
+      get_bullish_crypto_news: getBullishCryptoNewsTool,
+      get_bearish_crypto_news: getBearishCryptoNewsTool,
+    },
+    welcomeMessage: `Hello! I'm your Content Creator assistant. I specialize in creating engaging, high-converting content for all platforms and purposes, now with real-time crypto news integration!
+
+I can help you with:
+
+📱 **Social Media Content**
+
+• Instagram posts, stories, and reels
+
+• Twitter threads and viral tweets
+
+• LinkedIn professional content
+
+• TikTok scripts and captions
+
+
+📝 **Written Content**
+
+• Blog articles and SEO content
+
+• Email campaigns and newsletters
+
+• Sales copy and landing pages
+
+• Product descriptions
+
+🎨 **Creative Content**
+
+• Storytelling and narratives
+
+• Video scripts and podcast outlines
+
+• Visual content descriptions
+
+• Brand voice development
+
+
+🚀 **Crypto Content (NEW!)**
+
+• Real-time crypto news analysis
+
+• Trending crypto content creation
+
+• Coin-specific content and updates
+
+• Market sentiment-based content
+
+• Crypto newsletters and articles
+
+Just tell me what type of content you need, your target audience, and your goals - let's create something amazing together!`,
   },
-  {
+ /*  {
     id: 3,
     name: "Image Generator",
     description: "Generate images from text prompts using advanced AI models.",
@@ -132,7 +271,7 @@ IMPORTANT: Always return valid JSON from tools. If there's an error, return a pr
       dall_e_image_generator: dallEImageGeneratorTool,
     },
     welcomeMessage: `Welcome! I am your AI Image Generator. Describe what you want to see, and I'll create an image for you using DALL-E 3. Try prompts like: 'A futuristic city at sunset', 'A cat astronaut in space', or 'A logo for a tech startup'.`,
-  },
+  }, */
   {
     id: 4,
     name: "Code Assistant",

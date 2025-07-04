@@ -3,36 +3,10 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { BasicAgentsGrid } from "./basic-agents-grid"
+import { agents, Agent } from "@/lib/agents"
 
-
-interface Agent {
-  id: number
-  name: string
-  description: string
-  type: string
-  status: "active" | "idle" | "training"
-  tools: string[]
-  capabilities?: string[]
-  createdAt: string
-}
-
-export default function BasicAgentsPage() {
+export default function AgentsPage() {
   const router = useRouter()
-
-  const [agents] = React.useState<Agent[]>([
-    {
-      id: 1,
-      name: "On-Chain Analyst",
-      description:
-        "Analyzes blockchain data and generates reports on token performance and trends",
-      type: "analytics",
-      status: "active",
-      tools: ["coingecko", "dexscrenner", "mindcp", "openai-gpt-4o-mini"],
-      capabilities: ["on-chain", "data-analysis", "data-visualization"],
-      createdAt: "2025-01-20",
-    },
-   
-  ])
 
   const handleAgentClick = (agentId: number) => {
     // Navigate to chat screen with the selected agent

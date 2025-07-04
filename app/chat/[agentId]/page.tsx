@@ -8,16 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { useChat } from "ai/react"
 import { ChatMessage } from "@/components/chat-message"
-
-interface Agent {
-  id: number
-  name: string
-  description: string
-  type: string
-  status: "active" | "idle" | "training"
-  tools: string[]
-  capabilities?: string[]
-}
+import { agents, Agent } from "@/lib/agents"
+import type { Message } from "ai";
 
 // Updated Neon Button Component for Dark Theme
 function NeonButton({
@@ -77,52 +69,24 @@ export default function ChatPage() {
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
   const [connectionError, setConnectionError] = React.useState<string | null>(null)
 
-  // Get agent data from URL params
-  const [agent, setAgent] = React.useState<Agent | null>(null)
+  // Merkezi agent listesinden agent'ı bul
+  const agent = React.useMemo(() => agents.find(a => a.id === agentId) || null, [agentId])
 
-  React.useEffect(() => {
-    const agentDataParam = searchParams.get("data")
-    if (agentDataParam) {
-      try {
-        const agentData = JSON.parse(decodeURIComponent(agentDataParam))
-        setAgent(agentData)
-      } catch (error) {
-        console.error("Failed to parse agent data:", error)
-        // Fallback to default agent data
-        setAgent({
-          id: agentId,
-          name: `Agent ${agentId}`,
-          description: "AI Assistant",
-          type: "analytics",
-          status: "active",
-          tools: ["OpenAI GPT-4o"],
-          capabilities: ["general-assistance"],
-        })
-      }
-    } else {
-      // Fallback if no data provided
-      setAgent({
-        id: agentId,
-        name: `Agent ${agentId}`,
-        description: "AI Assistant",
-        type: "analytics",
-        status: "active",
-        tools: ["OpenAI GPT-4o"],
-        capabilities: ["general-assistance"],
-      })
-    }
-  }, [agentId, searchParams])
-
-  const { messages, input, handleInputChange, handleSubmit, isLoading, error, append, reload } = useChat({
-    api: "/api/chat",
-    initialMessages: [
+  const initialMessages: Message[] = React.useMemo(() => {
+    if (!agent) return [];
+    return [
       {
         id: "welcome-message",
         role: "assistant",
-        content:
-          "Hello! I'm your enhanced on-chain analysis agent. I can help you with:\n\n• **Token Information** - Get details about any cryptocurrency\n\n• **DEX Pairs** - Search and analyze trading pairs\n\n• **Trending Pools** - Discover popular liquidity pools\n\n• **Price Analysis** - Real-time market data\n\n• **Wallet Analysis** - Review wallet balances, recent transactions, and portfolio performance\n\nTry asking: 'What's the price of ETH?', 'Search for PEPE pairs', or 'Show trending pools'",
+        content: agent.welcomeMessage || "Welcome!",
       },
-    ],
+    ];
+  }, [agent]);
+
+  const { messages, input, handleInputChange, handleSubmit, isLoading, error, append, reload } = useChat({
+    api: "/api/chat",
+    body: { agentId },
+    initialMessages,
     onError: (error) => {
       console.error("Chat error:", error)
       setConnectionError(error.message)

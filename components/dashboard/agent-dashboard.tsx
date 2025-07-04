@@ -8,6 +8,7 @@ import { AgentGuideCard } from "../guide-cards"
 import { Press_Start_2P } from "next/font/google"
 import CustomWalletButton from "../custom-connect"
 import { ModelGrid } from "../filter/model-grid"
+import { agents } from "@/lib/agents"
 
 
 const pressStart2P = Press_Start_2P({
@@ -16,44 +17,19 @@ const pressStart2P = Press_Start_2P({
   weight: ["400"],
 })
 
-const agents = [
-  {
-    id: 1,
-    name: "Data Analyst",
-    description: "Processes and analyzes large datasets",
-    status: "active",
-    type: "Analytics",
-    lastActive: "2 minutes ago",
-  },
-  {
-    id: 2,
-    name: "Content Creator",
-    description: "Generates creative content and copy",
-    status: "idle",
-    type: "Creative",
-    lastActive: "1 hour ago",
-  },
-  {
-    id: 3,
-    name: "Code Assistant",
-    description: "Helps with programming and debugging",
-    status: "training",
-    type: "Development",
-    lastActive: "5 minutes ago",
-  },
-]
-
 // optional: dynamically show icon by agent type
 const getIcon = (type: string) => {
   switch (type) {
-    case "Analytics":
-      return <Bot className="h-4 w-4 text-white" />
-    case "Creative":
-      return <PenLine className="h-4 w-4 text-white" />
-    case "Development":
-      return <Brain className="h-4 w-4 text-white" />
+    case "analytics":
+      return <Bot className="h-5 w-5 text-white" />
+    case "creative":
+      return <PenLine className="h-5 w-5 text-white" />
+    case "image-generation":
+      return <Gift className="h-5 w-5 text-white" />
+    case "code":
+      return <Brain className="h-5 w-5 text-white" />
     default:
-      return <Bot className="h-4 w-4 text-white" />
+      return <Bot className="h-5 w-5 text-white" />
   }
 }
 
@@ -92,12 +68,15 @@ export function AgentDashboard() {
       {/* Stats Cards */}
       <h3 className="text-xl font-semibold">Your AI Agents</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <FancyCard
-          title="On-Chain Analyist Agent"
-          description="Analyzes blockchain data and provides insights on transactions, trends, and anomalies."
-          icon={<Bot className="h-5 w-5 text-white" />}
-          href="/chat/1?data=%7B%22id%22%3A1%2C%22name%22%3A%22On-Chain%20Analyst%22%2C%22description%22%3A%22Analyzes%20blockchain%20data%20and%20generates%20reports%20on%20token%20performance%20and%20trends%22%2C%22type%22%3A%22analytics%22%2C%22status%22%3A%22active%22%2C%22tools%22%3A%5B%22coingecko%22%2C%22dexscrenner%22%2C%22mindcp%22%2C%22openai-gpt-4o-mini%22%5D%2C%22capabilities%22%3A%5B%22on-chain%22%2C%22data-analysis%22%2C%22data-visualization%22%5D%7D"
-        />
+        {agents.map(agent => (
+          <FancyCard
+            key={agent.id}
+            title={agent.name}
+            description={agent.description}
+            icon={getIcon(agent.type)}
+            href={`/chat/${agent.id}`}
+          />
+        ))}
       </div>
 
      
