@@ -4,6 +4,9 @@ import { User, Bot, AlertCircle } from "lucide-react"
 import type { Message } from "ai"
 import { cn } from "@/lib/utils"
 import ReactMarkdown from "react-markdown"
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
+import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism"
+import type { Components } from "react-markdown"
 import { TrendingPoolsCard } from "./trending-pools-card"
 import { TokenInfoCompact } from "./token-info-compact"
 import { WalletAnalysisCard } from "./wallet-analysis-card"
@@ -226,8 +229,56 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
     message.toolInvocations?.some((tool) => tool.state === "call") &&
     message.content === ""
 
+  // Detect image in tool result (for image generator agent)
+  let imageUrl: string | null = null;
+  if (message.role === "assistant" && message.toolInvocations) {
+    for (const tool of message.toolInvocations) {
+      if (tool.state === "result" && tool.result) {
+        let img = null;
+        if (typeof tool.result === "string") {
+          try {
+            const parsed = JSON.parse(tool.result)
+            img = parsed.image
+          } catch {}
+        } else if (typeof tool.result === "object" && tool.result.image) {
+          img = tool.result.image
+        }
+        if (img) {
+          imageUrl = img.startsWith("http") ? img : `data:image/png;base64,${img}`
+          break
+        }
+      }
+    }
+  }
+
   const toolComponents = message.toolInvocations?.map((toolInvocation, toolIndex) => {
     if (toolInvocation.state !== "result") return null
+
+    // Image generator tool: render image directly and skip toolComponents
+    if (toolInvocation.toolName === "dall_e_image_generator") {
+      let img = null;
+      if (typeof toolInvocation.result === "string") {
+        try {
+          const parsed = JSON.parse(toolInvocation.result)
+          img = parsed.image
+        } catch {}
+      } else if (typeof toolInvocation.result === "object" && toolInvocation.result.image) {
+        img = toolInvocation.result.image
+      }
+      if (img) {
+        const imageUrl = img.startsWith("http") ? img : `data:image/png;base64,${img}`
+        return (
+          <div key={toolIndex} className="mt-4 flex justify-center">
+            <img
+              src={imageUrl}
+              alt="Generated"
+              style={{ maxWidth: 320, borderRadius: 12, boxShadow: "0 2px 16px rgba(0,0,0,0.15)" }}
+            />
+          </div>
+        )
+      }
+      return null;
+    }
 
     switch (toolInvocation.toolName) {
       case "get_token_pools":
@@ -825,7 +876,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
         {message.content && (
           <div
             className={cn(
-              "rounded-2xl px-3 py-3 sm:px-4 sm:py-4 backdrop-blur-md shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08),0_8px_32px_rgba(0,0,0,0.4)] w-full min-w-0",
+              "rounded-2xl px-3 py-3 sm:px-4 sm:py-4 backdrop-blur-md shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08),0_8px_32px_rgba(0,0,0,0.4)] w-full min-w-0 overflow-hidden",
               isUser
                 ? "bg-gradient-to-br from-purple-500/90 to-cyan-500/90 text-white border border-white/20"
                 : "bg-gradient-to-br from-white/8 via-white/5 to-white/3 border border-white/10 text-white",
@@ -882,6 +933,68 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                       </a>
                     )
                   },
+                  code({ className, children }) {
+                    const match = /language-(\w+)/.exec(className || "")
+                    const language = match ? match[1] : ""
+                    
+                    // Check if this is the Code Assistant agent (agent ID 4)
+                    // The agent ID can be in the URL or in the message ID
+                    const isCodeAssistant = message.role === "assistant" && 
+                      (message.id?.includes("agent-4") || // Direct agent ID reference
+                       message.id?.includes("code-assistant") || // Name reference
+                       window.location.pathname.includes("/chat/4")) // URL path check
+                    
+                    // Always apply syntax highlighting for code blocks with language specified
+                    if (language) {
+                      return (
+                        <div className="my-3 overflow-hidden rounded-md border border-white/20 max-w-full">
+                          <div className="bg-black/30 px-4 py-1 text-xs font-medium text-white/70 flex items-center justify-between">
+                            <span>{language}</span>
+                            <span className="text-xs opacity-60 sm:hidden">scroll →</span>
+                          </div>
+                          <div className="overflow-x-auto w-full scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30">
+                            <SyntaxHighlighter
+                              style={vscDarkPlus}
+                              language={language}
+                              PreTag="div"
+                              customStyle={{
+                                margin: 0,
+                                padding: '1rem',
+                                backgroundColor: 'rgba(0,0,0,0.2)',
+                                borderRadius: '0 0 0.375rem 0.375rem',
+                                maxWidth: '100%',
+                                overflowX: 'auto',
+                                lineHeight: '1.5',
+                              }}
+                              className="!bg-black/20 !mt-0 !mb-0 !rounded-t-none text-xs sm:text-sm"
+                              wrapLines={true}
+                              wrapLongLines={true}
+                              showLineNumbers={false}
+                              codeTagProps={{
+                                style: {
+                                  fontFamily: 'Menlo, Monaco, Consolas, "Courier New", monospace',
+                                }
+                              }}
+                            >
+                              {String(children).replace(/\n$/, "")}
+                            </SyntaxHighlighter>
+                          </div>
+                        </div>
+                      )
+                    }
+                    
+                    // Otherwise it's an inline code
+                    return (
+                      <code
+                        className={cn(
+                          "rounded-md bg-black/20 px-1.5 py-0.5 text-xs sm:text-sm font-mono break-words overflow-wrap-anywhere",
+                          className
+                        )}
+                      >
+                        {children}
+                      </code>
+                    )
+                  },
                   table({ children }) {
                     return (
                       <div className="overflow-x-auto my-4">
@@ -899,6 +1012,16 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
               >
                 {message.content}
               </ReactMarkdown>
+            )}
+            {/* Image rendering for image generator agent */}
+            {imageUrl && (
+              <div className="mt-4 flex justify-center">
+                <img
+                  src={imageUrl}
+                  alt="Generated"
+                  style={{ maxWidth: 320, borderRadius: 12, boxShadow: "0 2px 16px rgba(0,0,0,0.15)" }}
+                />
+              </div>
             )}
           </div>
         )}
