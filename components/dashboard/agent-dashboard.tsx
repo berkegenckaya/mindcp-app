@@ -3,10 +3,9 @@
 import { Plus, Bot, Brain, PenLine, PlayCircle, Database, Info, Gift, ArrowRight, Book } from "lucide-react"
 
 import { FancyCard } from "../stat-card"
-import { SidebarTrigger } from "../ui/sidebar"
-import { AgentGuideCard } from "../guide-cards"
+
 import { Press_Start_2P } from "next/font/google"
-import CustomWalletButton from "../custom-connect"
+
 import { ModelGrid } from "../filter/model-grid"
 import { agents } from "@/lib/agents"
 
