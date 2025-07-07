@@ -39,7 +39,7 @@ export const agents: Agent[] = [
     description: "Analyzes blockchain data and generates reports on token performance and trends",
     type: "analytics",
     status: "active",
-    tools: ["coingecko", "dexscrenner", "mindcp", "openai-gpt-4o-mini"],
+    tools: ["coingecko", "dexscreener", "mindcp", "openai-gpt-4o-mini"],
     capabilities: ["on-chain", "data-analysis", "data-visualization"],
     createdAt: "2025-01-20",
     systemPrompt: `You are a helpful AI assistant with access to comprehensive cryptocurrency and wallet analysis tools.
