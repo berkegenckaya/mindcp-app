@@ -13,6 +13,7 @@ import { WalletAnalysisCard } from "./wallet-analysis-card"
 import { DexPairsCard } from "./dex-pair-card"
 import { DexScreenerPairCard } from "./dex-screener-pair-card"
 import { CryptoNewsCard } from "./crypto-news-card"
+import { MultiChainPoolsCard } from "./multi-chain-pools-card"
 
 interface DexScreenerPair {
   chainId: string
@@ -91,6 +92,7 @@ interface ChatMessageProps {
   message: Message
   onTokenClick?: (tokenSymbol: string, network: string) => void
   onPairClick?: (pairAddress: string, network: string) => void
+  agentId?: string
 }
 
 interface TokenData {
@@ -223,7 +225,7 @@ interface WalletData {
   credits_used: number
 }
 
-export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageProps) {
+export function ChatMessage({ message, onTokenClick, onPairClick, agentId }: ChatMessageProps) {
   const isUser = message.role === "user"
   const isProcessingTool =
     message.role === "assistant" &&
@@ -645,12 +647,8 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
       case "get_dex_pair_info":
         try {
           const result = toolInvocation.result
-          let pairsData: DexPairData[] | null = null
-          let errorInfo: {
-            error: string
-            suggestion?: string
-            details?: string
-          } | null = null
+          let pairData: any = null
+          let errorInfo: { error: string; details?: string } | null = null
 
           // Handle different result formats
           if (typeof result === "string") {
@@ -658,13 +656,13 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
             if (parsed.error) {
               errorInfo = parsed
             } else {
-              pairsData = parsed.pairs_data || (parsed.pair_data ? [parsed.pair_data] : null)
+              pairData = parsed
             }
           } else if (result && typeof result === "object") {
             if (result.error) {
               errorInfo = result
             } else {
-              pairsData = result.pairs_data || (result.pair_data ? [result.pair_data] : null)
+              pairData = result
             }
           }
 
@@ -677,14 +675,9 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
               >
                 <div className="flex items-center gap-2 mb-2">
                   <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                  <span className="font-medium text-sm">DEX Pairs Error</span>
+                  <span className="font-medium text-sm">DEX Pair Error</span>
                 </div>
                 <p className="text-xs sm:text-sm mb-2 text-red-200">{errorInfo.error}</p>
-                {errorInfo.suggestion && (
-                  <p className="text-xs sm:text-sm text-red-200 bg-red-500/20 p-2 rounded-lg">
-                    💡 <strong>Suggestion:</strong> {errorInfo.suggestion}
-                  </p>
-                )}
                 {errorInfo.details && (
                   <details className="mt-2">
                     <summary className="text-xs cursor-pointer hover:text-red-200">Technical Details</summary>
@@ -695,36 +688,26 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
             )
           }
 
-          if (pairsData && Array.isArray(pairsData) && pairsData.length > 0) {
-            return <DexPairsCard key={toolIndex} pairs={pairsData} onTokenClick={onTokenClick} />
+          // Show pair data if available
+          if (pairData && pairData.pair_data) {
+            return <DexPairsCard key={toolIndex} pairs={[pairData.pair_data]} onTokenClick={onTokenClick} />
           }
 
-          // Fallback: No data available
           return (
             <div
               key={toolIndex}
-              className="rounded-2xl p-3 sm:p-4 bg-gradient-to-br from-orange-500/10 to-orange-600/10 backdrop-blur-md border border-orange-500/30 text-orange-300 w-full"
+              className="rounded-2xl p-3 sm:p-4 bg-gradient-to-br from-yellow-500/10 to-orange-500/10 backdrop-blur-md border border-yellow-500/30 text-yellow-200 w-full"
             >
               <div className="flex items-center gap-2 mb-2">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                <span className="font-medium text-sm">No DEX Pairs Found</span>
+                <span className="font-medium text-sm">Unexpected Response</span>
               </div>
-              <p className="text-xs sm:text-sm mb-3 text-orange-200">Unable to find DEX pairs. This could be due to:</p>
-              <ul className="text-xs sm:text-sm space-y-1 ml-4 list-disc text-orange-200">
-                <li>No pairs found for the search query</li>
-                <li>Invalid token symbol or pair address</li>
-                <li>Unsupported blockchain network</li>
-                <li>API rate limiting or connectivity issues</li>
-              </ul>
-              <div className="mt-3 p-2 bg-orange-500/20 rounded-lg">
-                <p className="text-xs text-orange-200">
-                  💡 <strong>Try:</strong> Use different search terms or check the token symbol spelling
-                </p>
-              </div>
+              <p className="text-xs sm:text-sm">
+                Received an unexpected response format from the DEX pair tool. Please try again.
+              </p>
             </div>
           )
         } catch (error) {
-          console.error("Error parsing DEX pairs data:", error)
           return (
             <div
               key={toolIndex}
@@ -732,15 +715,11 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
             >
               <div className="flex items-center gap-2 mb-2">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                <span className="font-medium text-sm">DEX Pairs Parse Error</span>
+                <span className="font-medium text-sm">DEX Pair Processing Error</span>
               </div>
-              <p className="text-xs sm:text-sm mb-2 text-red-200">Failed to parse DEX pairs response</p>
-              <details>
-                <summary className="text-xs cursor-pointer hover:text-red-200">Raw Response</summary>
-                <pre className="text-xs mt-1 p-2 bg-red-500/20 rounded overflow-x-auto">
-                  {JSON.stringify(toolInvocation.result, null, 2)}
-                </pre>
-              </details>
+              <p className="text-xs sm:text-sm text-red-200">
+                An error occurred while processing the DEX pair data: {error instanceof Error ? error.message : "Unknown error"}
+              </p>
             </div>
           )
         }
@@ -753,6 +732,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
             error: string
             suggestion?: string
             details?: string
+            wallet_info?: { address: string; status: string }
           } | null = null
 
           // Handle different result formats
@@ -772,7 +752,7 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
           }
 
           // Show error state
-          if (errorInfo) {
+          if (errorInfo)
             return (
               <div
                 key={toolIndex}
@@ -784,9 +764,15 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                 </div>
                 <p className="text-xs sm:text-sm mb-2 text-red-200">{errorInfo.error}</p>
                 {errorInfo.suggestion && (
-                  <p className="text-xs sm:text-sm text-red-200 bg-red-500/20 p-2 rounded-lg">
+                  <p className="text-xs sm:text-sm text-red-200 bg-red-500/20 p-2 rounded-lg mb-2">
                     💡 <strong>Suggestion:</strong> {errorInfo.suggestion}
                   </p>
+                )}
+                {errorInfo.wallet_info && (
+                  <div className="text-xs sm:text-sm text-red-200 bg-red-500/20 p-2 rounded-lg">
+                    <p><strong>Wallet:</strong> {errorInfo.wallet_info.address}</p>
+                    <p><strong>Status:</strong> {errorInfo.wallet_info.status}</p>
+                  </div>
                 )}
                 {errorInfo.details && (
                   <details className="mt-2">
@@ -796,7 +782,6 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                 )}
               </div>
             )
-          }
 
           // Show wallet data if available
           if (walletData && walletData.address && walletData.summary) {
@@ -935,6 +920,96 @@ export function ChatMessage({ message, onTokenClick, onPairClick }: ChatMessageP
                   {JSON.stringify(toolInvocation.result, null, 2)}
                 </pre>
               </details>
+            </div>
+          )
+        }
+
+      case "search_pools_by_ticker":
+        try {
+          const result = toolInvocation.result
+          let poolsData: any = null
+          let errorInfo: { error: string; ticker?: string } | null = null
+
+          // Handle different result formats
+          if (typeof result === "string") {
+            const parsed = JSON.parse(result)
+            if (parsed.error) {
+              errorInfo = parsed
+            } else {
+              poolsData = parsed
+            }
+          } else if (result && typeof result === "object") {
+            if (result.error) {
+              errorInfo = result
+            } else {
+              poolsData = result
+            }
+          }
+
+          // Show error state
+          if (errorInfo) {
+            return (
+              <div
+                key={toolIndex}
+                className="rounded-2xl p-3 sm:p-4 bg-gradient-to-br from-red-500/10 to-red-600/10 backdrop-blur-md border border-red-500/30 text-red-300 w-full"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                  <span className="font-medium text-sm">Pool Search Error</span>
+                </div>
+                <p className="text-xs sm:text-sm mb-2 text-red-200">{errorInfo.error}</p>
+                {errorInfo.ticker && (
+                  <p className="text-xs sm:text-sm text-red-200 bg-red-500/20 p-2 rounded-lg">
+                    💡 <strong>Suggestion:</strong> Try searching for a different ticker like "PEPE", "SHIB", or "DOGE"
+                  </p>
+                )}
+              </div>
+            )
+          }
+
+          // Show pools data if available
+          if (poolsData && poolsData.success && poolsData.pools_by_chain) {
+            return <MultiChainPoolsCard key={toolIndex} poolsData={poolsData} onPairClick={onPairClick} />
+          }
+
+          // Fallback: No data available
+          return (
+            <div
+              key={toolIndex}
+              className="rounded-2xl p-3 sm:p-4 bg-gradient-to-br from-orange-500/10 to-orange-600/10 backdrop-blur-md border border-orange-500/30 text-orange-300 w-full"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span className="font-medium text-sm">No Pool Data Available</span>
+              </div>
+              <p className="text-xs sm:text-sm mb-3 text-orange-200">
+                Unable to retrieve pool data for the requested ticker. This could be due to:
+              </p>
+              <ul className="text-xs sm:text-sm space-y-1 ml-4 list-disc text-orange-200">
+                <li>Token ticker not found on any supported chains</li>
+                <li>No active liquidity pools for this token</li>
+                <li>API rate limiting or connectivity issues</li>
+              </ul>
+              <div className="mt-3 p-2 bg-orange-500/20 rounded-lg">
+                <p className="text-xs text-orange-200">
+                  💡 <strong>Try:</strong> Use popular tickers like "PEPE", "SHIB", "DOGE", or check the spelling
+                </p>
+              </div>
+            </div>
+          )
+        } catch (error) {
+          return (
+            <div
+              key={toolIndex}
+              className="rounded-2xl p-3 sm:p-4 bg-gradient-to-br from-red-500/10 to-red-600/10 backdrop-blur-md border border-red-500/30 text-red-300 w-full"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span className="font-medium text-sm">Pool Search Error</span>
+              </div>
+              <p className="text-xs sm:text-sm text-red-200">
+                An error occurred while processing pool search results.
+              </p>
             </div>
           )
         }

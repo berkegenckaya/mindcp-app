@@ -1,5 +1,5 @@
 import { getNetworkTrendingPoolsTool, getTokenInfoTool, getTrendingPoolsTool } from "@/app/tools/gecko-terminal"
-import { getDexPairInfoTool, searchDexPairsTool, getTokenPairsTool } from "@/app/tools/dexscreener"
+import { getDexPairInfoTool, searchDexPairsTool, getTokenPairsTool, searchPoolsByTickerTool } from "@/app/tools/dexscreener"
 import { getWalletAnalysisTool } from "@/app/tools/cielo"
 import { getTokenPools } from "@/app/tools/gecko-terminal/tool"
 import { dallEImageGeneratorTool } from "@/app/tools/image-generator/tool"
@@ -47,15 +47,13 @@ export const agents: Agent[] = [
 You have access to these tools:
 
 TOKEN INFORMATION:
-1. get_coingecko_token_info - Get detailed information about ANY cryptocurrency token (preferred for token queries)
-2. get_token_info - Get token info from Gecko Terminal (limited coverage, use as fallback)
-
+1. get_token_info - Get token info from Gecko Terminal (limited coverage)
 
 DEX POOLS & PAIRS:
-3. get_trending_pools - Get trending trading pools across all networks (Gecko Terminal)
-4. get_network_trending_pools - Get trending trading pools for a specific network (Gecko Terminal)
-5. search_dex_pairs - Search for DEX pairs across multiple chains (DexScreener)
-
+2. get_trending_pools - Get trending trading pools across all networks (Gecko Terminal)
+3. get_network_trending_pools - Get trending trading pools for a specific network (Gecko Terminal)
+4. search_dex_pairs - Search for DEX pairs across multiple chains (DexScreener)
+5. search_pools_by_ticker - Search for pools by token ticker across ALL chains (DexScreener) - PREFERRED for ticker queries
 6. get_dex_pair_info - Get specific DEX pair information by chain and address (DexScreener)
 7. get_token_info_address - Fallback for token info by address (DexScreener)
 
@@ -63,21 +61,27 @@ WALLET ANALYSIS:
 8. get_wallet_analysis - Comprehensive wallet transaction analysis (Cielo Finance)
 
 TOOL PRIORITY & USAGE:
-- For TOKEN INFORMATION queries → ALWAYS use get_coingecko_token_info FIRST (broadest coverage)
+- For TOKEN TICKER queries (e.g., "PEPE", "SHIB", "DOGE") → ALWAYS use search_pools_by_ticker FIRST (best for finding pools across all chains)
 - For TRENDING POOLS queries → use get_trending_pools or get_network_trending_pools
-- For DEX PAIR SEARCH queries → use search_dex_pairs (great for finding specific pairs)
+- For DEX PAIR SEARCH queries → use search_dex_pairs (good for general pair searches)
 - For SPECIFIC PAIR INFO → use get_dex_pair_info (when you have chain + address)
 - For WALLET ANALYSIS → use get_wallet_analysis (comprehensive transaction history and insights)
 - For TOKEN INFO by ADDRESS → use get_token_info_address as a fallback
 
 When users ask about:
-- Specific tokens (BTC, ETH, DOGE, etc.) → use get_coingecko_token_info
+- Specific token tickers (PEPE, SHIB, DOGE, etc.) → use search_pools_by_ticker (shows top 5 pools per chain)
 - "trending pools" or "hot pools" → use get_trending_pools  
 - Network-specific pools (e.g., "Ethereum pools") → use get_network_trending_pools
-- "search for PEPE pairs" or "find SHIB pairs" → use search_dex_pairs
+- "search for pairs" or general pair queries → use search_dex_pairs
 - Specific pair with address → use get_dex_pair_info
 - "analyze wallet", "wallet analysis", or wallet addresses → use get_wallet_analysis
 - For token info by address → use get_token_info_address
+
+TICKER SEARCH FEATURES:
+- Searches across ALL supported chains (Ethereum, BSC, Polygon, Solana, etc.)
+- Returns top 5 pools per chain sorted by liquidity
+- Shows price, volume, liquidity, and DEX information
+- Provides direct links to view pairs on DexScreener
 
 WALLET ANALYSIS FEATURES:
 - Transaction history and volume analysis
@@ -102,22 +106,25 @@ RESPONSE GUIDELINES:
 - Present information clearly and conversationally
 - Include raw tool responses for UI component rendering
 - Provide insights about price movements, volume, liquidity, and wallet behavior
+- For ticker queries, highlight the best pools across different chains
 - Suggest alternatives if searches fail
 - Be helpful and ask clarifying questions when needed
 - For wallet analysis, highlight key insights and patterns
 
-IMPORTANT: Always return valid JSON from tools. If there's an error, return a proper error object with an "error" field.`,
+IMPORTANT: Always return valid JSON from tools. If there's an error, return a proper error object with an "error" field.
+`,
     toolSet: {
       get_token_info: getTokenInfoTool,
       get_trending_pools: getTrendingPoolsTool,
       get_network_trending_pools: getNetworkTrendingPoolsTool,
       search_dex_pairs: searchDexPairsTool,
+      search_pools_by_ticker: searchPoolsByTickerTool,
       get_dex_pair_info: getDexPairInfoTool,
       get_wallet_analysis: getWalletAnalysisTool,
       get_token_info_address: getTokenPairsTool,
       get_token_pools: getTokenPools,
     },
-    welcomeMessage: `Hello! I'm your enhanced on-chain analysis agent. I can help you with:\n\n• **Token Information** - Get details about any cryptocurrency\n\n• **DEX Pairs** - Search and analyze trading pairs\n\n• **Trending Pools** - Discover popular liquidity pools\n\n• **Price Analysis** - Real-time market data\n\n• **Wallet Analysis** - Review wallet balances, recent transactions, and portfolio performance\n\nTry asking: 'What's the price of ETH?', 'Search for PEPE pairs', or 'Show trending pools'`,
+    welcomeMessage: `Hello! I'm your enhanced on-chain analysis agent. I can help you with:\n\n• **Token Ticker Search** - Find pools for any token across all chains (e.g., "PEPE", "SHIB")\n\n• **DEX Pairs** - Search and analyze trading pairs\n\n• **Trending Pools** - Discover popular liquidity pools\n\n• **Price Analysis** - Real-time market data\n\n• **Wallet Analysis** - Review wallet balances, recent transactions, and portfolio performance\n\nTry asking: 'Show me PEPE pools', 'Search for SHIB pairs', or 'Show trending pools'`,
   },
   {
     id: 2,
@@ -207,55 +214,7 @@ Be creative, engaging, and results-focused in all your content creation!`,
       get_bullish_crypto_news: getBullishCryptoNewsTool,
       get_bearish_crypto_news: getBearishCryptoNewsTool,
     },
-    welcomeMessage: `Hello! I'm your Content Creator assistant. I specialize in creating engaging, high-converting content for all platforms and purposes, now with real-time crypto news integration!
-
-I can help you with:
-
-📱 **Social Media Content**
-
-• Instagram posts, stories, and reels
-
-• Twitter threads and viral tweets
-
-• LinkedIn professional content
-
-• TikTok scripts and captions
-
-
-📝 **Written Content**
-
-• Blog articles and SEO content
-
-• Email campaigns and newsletters
-
-• Sales copy and landing pages
-
-• Product descriptions
-
-🎨 **Creative Content**
-
-• Storytelling and narratives
-
-• Video scripts and podcast outlines
-
-• Visual content descriptions
-
-• Brand voice development
-
-
-🚀 **Crypto Content (NEW!)**
-
-• Real-time crypto news analysis
-
-• Trending crypto content creation
-
-• Coin-specific content and updates
-
-• Market sentiment-based content
-
-• Crypto newsletters and articles
-
-Just tell me what type of content you need, your target audience, and your goals - let's create something amazing together!`,
+    welcomeMessage: `Hi! I'm your Content Creator assistant. I can help you create engaging content for:\n\n• **Social Media** - Posts, threads, captions\n\n• **Written Content** - Blogs, emails, sales copy  \n\n• **Creative Content** - Scripts, stories, descriptions\n\n• **Crypto Content** - News analysis, market updates\n\nJust tell me what you need and let's create something amazing!`,
   },
  /*  {
     id: 3,

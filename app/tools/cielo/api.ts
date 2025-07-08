@@ -6,63 +6,139 @@ export async function fetchWalletFeed(params: CieloFeedParams): Promise<CieloFee
   try {
     console.log("Fetching wallet feed from Cielo:", params)
 
-    // Development mode'da mock data kullan
-   /*  if (process.env.NODE_ENV === "development" && process.env.USE_MOCK_DATA === "true") {
-      console.log("Using mock data for development")
-      return mockWalletData
-    } */
-
-    // Build query parameters
+    // Build query parameters more carefully
     const queryParams = new URLSearchParams()
 
-    if (params.wallet_address) queryParams.append("wallet", params.wallet_address)
-    if (params.limit) queryParams.append("limit", params.limit.toString())
-    if (params.chains) queryParams.append("chains", params.chains.join(","))
-    if (params.transaction_types) queryParams.append("transaction_types", params.transaction_types.join(","))
-    if (params.tokens) queryParams.append("tokens", params.tokens.join(","))
-    if (params.min_usd_value) queryParams.append("min_usd_value", params.min_usd_value.toString())
-    if (params.max_usd_value) queryParams.append("max_usd_value", params.max_usd_value.toString())
-    if (params.starting_point) queryParams.append("starting_point", params.starting_point)
-    if (params.new_trades !== undefined) queryParams.append("new_trades", params.new_trades.toString())
+    if (params.wallet_address) {
+      queryParams.append("wallet", params.wallet_address)
+    } else {
+      throw new Error("wallet_address is required")
+    }
+    
+    if (params.limit) queryParams.append("limit", Math.min(params.limit, 500).toString())
+    
+    // Always include ethereum as default chain if no chains specified
+    const chains = params.chains && params.chains.length > 0 ? params.chains : ["ethereum"]
+    queryParams.append("chains", chains.join(","))
+    
+    if (params.transaction_types && params.transaction_types.length > 0) {
+      queryParams.append("transaction_types", params.transaction_types.join(","))
+    }
+    if (params.tokens && params.tokens.length > 0) {
+      queryParams.append("tokens", params.tokens.join(","))
+    }
+    if (params.min_usd_value !== undefined && params.min_usd_value >= 0) {
+      queryParams.append("min_usd_value", params.min_usd_value.toString())
+    }
+    if (params.max_usd_value !== undefined && params.max_usd_value > 0) {
+      queryParams.append("max_usd_value", params.max_usd_value.toString())
+    }
+    if (params.starting_point) {
+      queryParams.append("starting_point", params.starting_point)
+    }
+    if (params.new_trades !== undefined) {
+      queryParams.append("new_trades", params.new_trades.toString())
+    }
 
-    const url = `${CIELO_BASE_URL}/feed?${queryParams.toString()}&chains=ethereum`
+    const url = `${CIELO_BASE_URL}/feed?${queryParams.toString()}`
     console.log("Cielo API URL:", url)
+
+    // Check if API key is available
+    const apiKey = process.env.CIELO_API_KEY || "a7725cd3-5aa5-45f9-886a-0cf51bd39aa1"
+    if (!apiKey) {
+      throw new Error("CIELO_API_KEY is not configured")
+    }
 
     const response = await fetch(url, {
       headers: {
         Accept: "application/json",
-        "X-API-KEY": process.env.CIELO_API_KEY || "a7725cd3-5aa5-45f9-886a-0cf51bd39aa1",
-        "User-Agent": "Mozilla/5.0 (compatible; WalletBot/1.0)",
+        "X-API-KEY": apiKey,
+        "User-Agent": "Mozilla/5.0 (compatible; MindCP-WalletBot/1.0)",
+        "Content-Type": "application/json",
       },
+      // Add timeout to prevent hanging requests
+      signal: AbortSignal.timeout(30000), // 30 seconds timeout
     })
 
     console.log("Cielo API Response status:", response.status)
+    console.log("Cielo API Response headers:", Object.fromEntries(response.headers.entries()))
 
     if (!response.ok) {
       const errorText = await response.text()
       console.error("Cielo API Error:", errorText)
-
-      // API hatası durumunda mock data döndür
-      /* if (process.env.NODE_ENV === "development") {
-        console.log("API failed, falling back to mock data")
-        return mockWalletData
-      } */
-
+      
+      // Handle specific error cases
+      if (response.status === 401) {
+        throw new Error("API authentication failed. Please check your API key.")
+      } else if (response.status === 429) {
+        throw new Error("API rate limit exceeded. Please try again later.")
+      } else if (response.status === 404) {
+        throw new Error("Wallet not found or no transactions available.")
+      } else if (response.status >= 500) {
+        throw new Error("Cielo API server error. Please try again later.")
+      }
+      
       throw new Error(`Failed to fetch wallet feed: ${response.status} - ${errorText}`)
     }
 
     const data: CieloFeedResponse = await response.json()
-    console.log("Cielo raw response:", JSON.stringify(data, null, 2))
+    console.log("Cielo API response structure:", {
+      status: data.status,
+      itemsCount: data.data?.items?.length || 0,
+      hasNextPage: data.data?.paging?.has_next_page,
+    })
+
+    // Handle pending status
+    if (data.status === 'pending') {
+      console.log("Cielo API returned pending status - wallet might be processing")
+      return {
+        status: 'success',
+        data: {
+          items: [],
+          paging: {
+            total_rows_in_page: 0,
+            has_next_page: false
+          }
+        }
+      }
+    }
+
+    // Validate response structure
+    if (!data.data) {
+      // If status is success but no data, return empty result
+      if (data.status === 'success') {
+        return {
+          status: 'success',
+          data: {
+            items: [],
+            paging: {
+              total_rows_in_page: 0,
+              has_next_page: false
+            }
+          }
+        }
+      }
+      throw new Error(`Invalid API response: missing data field. Status: ${data.status}`)
+    }
+
+    if (!Array.isArray(data.data.items)) {
+      throw new Error("Invalid API response: items is not an array")
+    }
 
     return data
   } catch (error) {
     console.error("Error in fetchWalletFeed:", error)
-
-    // Development mode'da hata durumunda mock data döndür
-    /* if (process.env.NODE_ENV === "development") {
-      console.log("Error occurred, falling back to mock data")
-      return mockWalletData
-    } */
+    
+    // Provide more specific error messages
+    if (error instanceof TypeError && error.message.includes("fetch")) {
+      console.error("Network error - API might be unreachable")
+      return null
+    }
+    
+    if (error instanceof Error && error.name === "AbortError") {
+      console.error("Request timeout - API took too long to respond")
+      return null
+    }
 
     return null
   }

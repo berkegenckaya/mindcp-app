@@ -6,6 +6,7 @@ import {
   fetchDexScreenerTokenPairs,
   normalizeChainName,
   validateTokenAddress,
+  searchPoolsByTicker,
 } from "./api"
 
 export const searchDexPairsTool = tool({
@@ -249,6 +250,49 @@ export const getTokenPairsTool = tool({
       return JSON.stringify({
         error: `An error occurred while fetching token pairs: ${error instanceof Error ? error.message : "Unknown error"}`,
         details: error instanceof Error ? error.stack : undefined,
+      })
+    }
+  },
+})
+
+// NEW TOOL: Search pools by token ticker across all chains
+export const searchPoolsByTickerTool = tool({
+  description: "Search for DEX pools by token ticker across all supported chains. Returns the top 5 pools for each chain where the ticker is found.",
+  parameters: z.object({
+    ticker: z
+      .string()
+      .describe('Token ticker/symbol to search for. Examples: "PEPE", "SHIB", "DOGE", "USDC"'),
+    limit: z
+      .number()
+      .optional()
+      .default(5)
+      .describe("Number of top pools to return per chain (default: 5, max: 10)"),
+  }),
+  execute: async ({ ticker, limit = 5 }) => {
+    try {
+      console.log("Searching pools by ticker:", { ticker, limit })
+
+      // Validate inputs
+      if (!ticker || ticker.trim().length === 0) {
+        return JSON.stringify({
+          error: "Ticker cannot be empty. Please provide a valid token ticker like 'PEPE', 'SHIB', or 'DOGE'.",
+        })
+      }
+
+      // Ensure limit is within bounds
+      const safeLimit = Math.min(Math.max(limit, 1), 10)
+
+      const result = await searchPoolsByTicker(ticker.trim(), safeLimit)
+
+      console.log("Search pools by ticker result:", result.success ? "success" : "error")
+      return JSON.stringify(result)
+    } catch (error) {
+      console.error("Search pools by ticker tool error:", error)
+      return JSON.stringify({
+        error: `An error occurred while searching for pools: ${error instanceof Error ? error.message : "Unknown error"}`,
+        ticker: ticker.toUpperCase(),
+        total_pools: 0,
+        chains: []
       })
     }
   },

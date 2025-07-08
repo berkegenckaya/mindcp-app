@@ -1,7 +1,7 @@
 import { streamText } from "ai"
 import { openai } from "@ai-sdk/openai"
 import { getNetworkTrendingPoolsTool, getTokenInfoTool, getTrendingPoolsTool } from "@/app/tools/gecko-terminal"
-import { getDexPairInfoTool, searchDexPairsTool,getTokenPairsTool  } from "@/app/tools/dexscreener"
+import { getDexPairInfoTool, searchDexPairsTool, getTokenPairsTool, searchPoolsByTickerTool } from "@/app/tools/dexscreener"
 import { getWalletAnalysisTool } from "@/app/tools/cielo"
 import { getTokenPools } from "@/app/tools/gecko-terminal/tool"
 import { agents } from "@/lib/agents"
@@ -19,10 +19,21 @@ export async function POST(req: Request) {
     if (!messages || !Array.isArray(messages)) {
       throw new Error("Invalid messages format")
     }
-    if (typeof agentId !== "number") {
+    
+    // Convert agentId to number if it's a string
+    let numericAgentId: number
+    if (typeof agentId === "string") {
+      numericAgentId = parseInt(agentId, 10)
+      if (isNaN(numericAgentId)) {
+        throw new Error("Invalid agentId: must be a valid number")
+      }
+    } else if (typeof agentId === "number") {
+      numericAgentId = agentId
+    } else {
       throw new Error("Missing or invalid agentId")
     }
-    const agent = agents.find(a => a.id === agentId)
+    
+    const agent = agents.find(a => a.id === numericAgentId)
     if (!agent) {
       throw new Error("Agent not found")
     }

@@ -231,6 +231,7 @@ export default function ChatPage() {
               message={message}
               onTokenClick={handleTokenClick}
               onPairClick={handlePairClick}
+              agentId={agentId.toString()}
             />
           ))}
           <div ref={messagesEndRef} />

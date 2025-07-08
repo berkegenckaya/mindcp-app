@@ -175,6 +175,93 @@ export async function fetchMultiChainTokenPairs(
   return results
 }
 
+// NEW FUNCTION: Search for pools by token ticker across all chains
+export async function searchPoolsByTicker(ticker: string, limit: number = 5): Promise<Record<string, any>> {
+  try {
+    console.log(`Searching pools for ticker: ${ticker}`)
+    
+    // Use DexScreener search API to find pairs for the ticker
+    const pairs = await searchDexScreenerPairs(ticker)
+    
+    if (!pairs || pairs.length === 0) {
+      return {
+        error: `No pools found for ticker "${ticker}". Please check the ticker symbol and try again.`,
+        ticker: ticker.toUpperCase(),
+        total_pools: 0,
+        chains: []
+      }
+    }
+
+    // Group pairs by chain and get top pools for each chain
+    const poolsByChain: Record<string, any[]> = {}
+    
+    pairs.forEach(pair => {
+      const chain = pair.chainId
+      if (!poolsByChain[chain]) {
+        poolsByChain[chain] = []
+      }
+      poolsByChain[chain].push(pair)
+    })
+
+    // Sort pools by liquidity within each chain and limit results
+    const formattedResult: Record<string, any> = {}
+    const allChains: string[] = []
+    let totalPools = 0
+
+    Object.keys(poolsByChain).forEach(chain => {
+      // Sort by liquidity (parse the formatted string back to number for sorting)
+      const sortedPools = poolsByChain[chain]
+        .sort((a, b) => {
+          const aLiquidity = parseFormattedNumber(a.liquidity)
+          const bLiquidity = parseFormattedNumber(b.liquidity)
+          return bLiquidity - aLiquidity
+        })
+        .slice(0, limit)
+
+      if (sortedPools.length > 0) {
+        formattedResult[chain] = {
+          chain_name: getChainDisplayName(chain),
+          pools_count: sortedPools.length,
+          pools: sortedPools.map(pool => ({
+            name: pool.name,
+            dex: pool.dexId,
+            price: pool.price,
+            price_change_24h: pool.price_change_24h,
+            price_trend: pool.price_trend,
+            volume_24h: pool.volume_24h,
+            liquidity: pool.liquidity,
+            pair_address: pool.pairAddress,
+            base_token: pool.baseToken,
+            quote_token: pool.quoteToken,
+            url: pool.url,
+            image_url: pool.image_url // Add image_url field
+          }))
+        }
+        allChains.push(chain)
+        totalPools += sortedPools.length
+      }
+    })
+
+    return {
+      success: true,
+      message: `Found ${totalPools} pools for ${ticker.toUpperCase()} across ${allChains.length} chains:`,
+      ticker: ticker.toUpperCase(),
+      total_pools: totalPools,
+      chains: allChains,
+      pools_by_chain: formattedResult
+    }
+
+  } catch (error) {
+    console.error("Error searching pools by ticker:", error)
+    return {
+      error: `An error occurred while searching for pools: ${error instanceof Error ? error.message : "Unknown error"}`,
+      ticker: ticker.toUpperCase(),
+      total_pools: 0,
+      chains: []
+    }
+  }
+}
+
 // UPDATED FORMAT FUNCTION: Handle dynamic properties properly
 function formatDexPair(pair: DexScreenerPair): FormattedDexPair | null {
   try {
@@ -392,4 +479,34 @@ export const rateLimiter = {
     const now = Date.now()
     this.requests = this.requests.filter((reqTime) => now - reqTime < this.window)
   },
+}
+
+// Helper function to parse formatted numbers back to actual numbers for sorting
+function parseFormattedNumber(formattedStr: string): number {
+  if (!formattedStr || formattedStr === "N/A") return 0
+  
+  const cleanStr = formattedStr.replace(/[$,]/g, '')
+  const multiplier = cleanStr.includes('B') ? 1e9 : 
+                    cleanStr.includes('M') ? 1e6 : 
+                    cleanStr.includes('K') ? 1e3 : 1
+  
+  const numStr = cleanStr.replace(/[BMK]/g, '')
+  return parseFloat(numStr) * multiplier || 0
+}
+
+// Helper function to get chain display names
+function getChainDisplayName(chainId: string): string {
+  const chainNames: Record<string, string> = {
+    ethereum: "Ethereum",
+    bsc: "BSC",
+    polygon: "Polygon",
+    avalanche: "Avalanche",
+    fantom: "Fantom",
+    cronos: "Cronos",
+    arbitrum: "Arbitrum",
+    optimism: "Optimism",
+    base: "Base",
+    solana: "Solana",
+  }
+  return chainNames[chainId] || chainId.toUpperCase()
 }

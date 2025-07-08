@@ -49,7 +49,12 @@ export const getWalletAnalysisTool = tool({
 
       if (!feedData.data.items || feedData.data.items.length === 0) {
         return JSON.stringify({
-          error: `No transactions found for wallet ${walletAddress}. The wallet might be inactive or have no transactions matching the specified criteria.`,
+          error: `No transactions found for wallet ${walletAddress}. The wallet might be inactive, new, or have no transactions matching the specified criteria.`,
+          suggestion: "Try analyzing a wallet with recent activity, or check if this is the correct wallet address.",
+          wallet_info: {
+            address: walletAddress,
+            status: "No recent transactions found"
+          }
         })
       }
 

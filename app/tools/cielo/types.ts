@@ -62,8 +62,8 @@ export interface CieloTransaction {
 }
 
 export interface CieloFeedResponse {
-  status: string
-  data: {
+  status: string // 'success', 'pending', 'error', etc.
+  data?: {
     items: CieloTransaction[]
     paging: {
       total_rows_in_page: number
@@ -71,6 +71,7 @@ export interface CieloFeedResponse {
       next_cursor?: string
     }
   }
+  message?: string // For error messages
 }
 
 export interface CieloFeedParams {
